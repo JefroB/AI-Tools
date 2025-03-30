@@ -1,24 +1,36 @@
 {
   "name": "ai-tools",
   "version": "1.0.0",
-  "description": "Utility tools for AI assistants to read and write files",
+  "description": "Comprehensive utility tools for AI assistants to work with files, code, and projects",
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "example": "node examples/basic-usage.js",
+    "advanced-example": "node examples/advanced-usage.js"
   },
   "keywords": [
     "ai",
     "tools",
     "file",
-    "utilities"
+    "utilities",
+    "code",
+    "project",
+    "execution"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "fs-extra": "^11.1.1"
+    "fs-extra": "^11.1.1",
+    "diff": "^5.1.0"
   },
   "devDependencies": {
-    "jest": "^29.5.0"
+    "jest": "^29.5.0",
+    "prettier": "^2.8.8",
+    "eslint": "^8.38.0"
+  },
+  "optionalDependencies": {
+    "prettier": "^2.8.8",
+    "eslint": "^8.38.0"
   }
 }
