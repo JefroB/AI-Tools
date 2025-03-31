@@ -1,280 +1,464 @@
 /**
- * AI Tools - Advanced Usage Example
- * Demonstrates how to use the advanced features of the AI Tools package
+ * AI Tools - Advanced Usage Examples
+ * Demonstrates the new features for error reduction and cost efficiency
  */
 
-const aiTools = require('../src');
 const path = require('path');
+const fs = require('fs-extra');
+const aiTools = require('../src/index');
 
-// Async function to run the examples
-async function runAdvancedExamples() {
-  try {
-    console.log('AI Tools - Advanced Usage Examples\n');
-    
-    // Create a test directory
-    const testDir = './test-advanced-output';
-    console.log(`Creating directory: ${testDir}`);
-    await aiTools.createDirectory(testDir);
-    
-    // Create some test files
-    const jsFilePath = path.join(testDir, 'example.js');
-    const jsContent = `/**
+// Create a test directory for our examples
+const TEST_DIR = path.join(__dirname, '..', 'test-advanced-output');
+fs.ensureDirSync(TEST_DIR);
+
+// Create a sample file for testing
+const EXAMPLE_FILE = path.join(TEST_DIR, 'example.js');
+const EXAMPLE_CONTENT = `/**
  * Example JavaScript file
  * Contains some functions and classes for testing
  */
 
 // Import some modules
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
-/**
- * Calculate the total price of items
- * @param {Array} items - Array of items with prices
- * @returns {number} - Total price
- */
+// Define a simple function
 function calculateTotal(items) {
-  return items.reduce((sum, item) => sum + item.price, 0);
+  return items.reduce((total, item) => total + item.price, 0);
 }
 
-/**
- * Format a price as currency
- * @param {number} price - The price to format
- * @returns {string} - Formatted price
- */
-function formatPrice(price) {
-  return '$' + price.toFixed(2);
+// Format price with currency
+function formatPrice(price, currency = 'USD') {
+  return \`\${currency} \${price.toFixed(2)}\`;
 }
 
-/**
- * User class representing a user in the system
- */
+// User class
 class User {
-  /**
-   * Create a user
-   * @param {string} name - User's name
-   * @param {string} email - User's email
-   */
   constructor(name, email) {
     this.name = name;
     this.email = email;
+    this.createdAt = new Date();
   }
   
-  /**
-   * Get user's display name
-   * @returns {string} - Display name
-   */
   getDisplayName() {
-    return this.name;
+    return this.name || this.email.split('@')[0];
+  }
+  
+  toJSON() {
+    return {
+      name: this.name,
+      email: this.email,
+      createdAt: this.createdAt
+    };
   }
 }
 
-// Export the functions and classes
+// Export everything
 export { calculateTotal, formatPrice, User };
 `;
+
+fs.writeFileSync(EXAMPLE_FILE, EXAMPLE_CONTENT);
+
+// Helper function to run examples and log results
+async function runExample(name, fn) {
+  console.log(`\n=== Running Example: ${name} ===`);
+  try {
+    const result = await fn();
+    if (result !== undefined) {
+      console.log('Result:', typeof result === 'object' ? JSON.stringify(result, null, 2) : result);
+    }
+    console.log(`✅ ${name} completed successfully`);
+  } catch (error) {
+    console.error(`❌ ${name} failed:`, error.message);
+  }
+}
+
+// Run all examples
+async function runAllExamples() {
+  // 1. Context-Aware Reading & Summarization Examples
+  await runExample('Read File Chunk', async () => {
+    const chunk = await aiTools.readFileChunk(EXAMPLE_FILE, 10, 15);
+    console.log('File chunk (lines 10-15):');
+    console.log(chunk);
+  });
+  
+  await runExample('Read File Section', async () => {
+    const section = await aiTools.readFileSection(EXAMPLE_FILE, 'function calculateTotal', 'function formatPrice');
+    console.log('File section between "function calculateTotal" and "function formatPrice":');
+    console.log(section);
+  });
+  
+  await runExample('Get File Structure', async () => {
+    const structure = await aiTools.getFileStructure(TEST_DIR, {
+      ignorePatterns: ['node_modules/**', '.git/**'],
+      respectGitignore: true
+    });
+    console.log('File structure:');
+    console.log(structure);
+  });
+  
+  await runExample('Summarize File', async () => {
+    const summary = await aiTools.summarizeFile(EXAMPLE_FILE);
+    console.log('File summary:');
+    console.log(summary);
+  });
+  
+  await runExample('Summarize Directory', async () => {
+    const summary = await aiTools.summarizeDirectory(TEST_DIR);
+    console.log('Directory summary:');
+    console.log(summary);
+  });
+  
+  // 2. Code-Specific Operations Examples
+  await runExample('Find Function', async () => {
+    const func = await aiTools.findFunction(EXAMPLE_FILE, 'calculateTotal');
+    console.log('Found function:');
+    console.log(func);
+  });
+  
+  await runExample('Find Class', async () => {
+    const cls = await aiTools.findClass(EXAMPLE_FILE, 'User');
+    console.log('Found class:');
+    console.log(cls);
+  });
+  
+  await runExample('Replace Code Block', async () => {
+    const newImplementation = `// Format price with currency and symbol
+function formatPrice(price, currency = 'USD') {
+  const symbols = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥'
+  };
+  const symbol = symbols[currency] || '';
+  return \`\${symbol}\${price.toFixed(2)} \${currency}\`;
+}`;
     
-    console.log(`Writing JavaScript file: ${jsFilePath}`);
-    await aiTools.writeFile(jsFilePath, jsContent);
+    await aiTools.replaceCodeBlock(EXAMPLE_FILE, 'function formatPrice', newImplementation);
+    console.log('Code block replaced');
     
-    // Create a package.json file
-    const packageJsonPath = path.join(testDir, 'package.json');
-    const packageJsonContent = {
-      name: 'ai-tools-test',
+    // Verify the replacement
+    const content = await aiTools.readFile(EXAMPLE_FILE);
+    console.log('Updated file content:');
+    console.log(content);
+  });
+  
+  await runExample('Add Import', async () => {
+    await aiTools.addImport(EXAMPLE_FILE, "import { useEffect } from 'react';");
+    console.log('Import added');
+    
+    // Verify the addition
+    const content = await aiTools.readFile(EXAMPLE_FILE);
+    console.log('Updated file with new import:');
+    console.log(content);
+  });
+  
+  // 3. Schema Validation Examples
+  await runExample('Generate Schema', () => {
+    const sampleData = {
+      user: {
+        name: 'John Doe',
+        email: 'john@example.com',
+        age: 30,
+        preferences: {
+          theme: 'dark',
+          notifications: true
+        }
+      },
+      items: [
+        { id: 1, name: 'Item 1', price: 10.99 },
+        { id: 2, name: 'Item 2', price: 24.99 }
+      ],
+      total: 35.98
+    };
+    
+    const schema = aiTools.generateSchema(sampleData, {
+      id: 'order',
+      title: 'Order Schema',
+      description: 'Schema for order data',
+      required: {
+        'user.name': true,
+        'user.email': true,
+        'items': true
+      },
+      critical: {
+        'user.email': true,
+        'total': true
+      }
+    });
+    
+    console.log('Generated schema:');
+    return schema;
+  });
+  
+  await runExample('Validate With Warnings', async () => {
+    // Create sample data with some issues
+    const data = {
+      user: {
+        name: 'Jane Doe',
+        // Missing email (critical)
+        age: 'twenty-five' // Wrong type (warning)
+      },
+      items: [
+        { id: 1, name: 'Item 1', price: 10.99 },
+        { id: 2, name: 'Item 2', price: 24.99 }
+      ],
+      total: 35.98
+    };
+    
+    // Create a schema
+    const schema = aiTools.generateSchema(data, {
+      id: 'order-validation',
+      required: {
+        'user.email': true
+      },
+      critical: {
+        'user.email': true
+      }
+    });
+    
+    // Validate the data
+    const result = await aiTools.validateWithWarnings(data, schema);
+    console.log('Validation result:');
+    return result;
+  });
+  
+  // 4. Token Optimization Examples
+  await runExample('Count Tokens', () => {
+    const text = 'This is a sample text that will be used to estimate token count.';
+    const tokenCount = aiTools.countTokens(text, 'claude-3-opus');
+    console.log(`Text: "${text}"`);
+    console.log(`Estimated token count: ${tokenCount}`);
+  });
+  
+  await runExample('Truncate To Token Limit', () => {
+    const longText = 'This is a very long text that needs to be truncated to fit within a specific token limit. ' +
+      'We want to preserve the beginning and end of the text, but remove some content from the middle. ' +
+      'This is important for maintaining context while reducing token usage. ' +
+      'The beginning of the text often contains important context and instructions. ' +
+      'The end of the text often contains the most recent and relevant information. ' +
+      'By truncating the middle, we can reduce tokens while preserving the most important parts.';
+    
+    const truncated = aiTools.truncateToTokenLimit(longText, 20, {
+      model: 'claude-3-opus',
+      preserveStart: true,
+      preserveEnd: true,
+      startRatio: 0.7
+    });
+    
+    console.log('Original text:');
+    console.log(longText);
+    console.log(`Original token count: ${aiTools.countTokens(longText)}`);
+    console.log('\nTruncated text:');
+    console.log(truncated.text);
+    console.log(`Truncated token count: ${truncated.tokenCount}`);
+    
+    return truncated;
+  });
+  
+  await runExample('Generate and Apply Diff', async () => {
+    // Original code
+    const originalCode = await aiTools.readFile(EXAMPLE_FILE);
+    
+    // Modified code (add a new method to User class)
+    const modifiedCode = originalCode.replace(
+      'toJSON() {',
+      'toJSON() {\n    // Added a comment to test diff\n'
+    );
+    
+    // Generate diff
+    const diffText = aiTools.generateDiff(originalCode, modifiedCode);
+    console.log('Generated diff:');
+    console.log(diffText);
+    
+    // Apply diff to create a new file
+    const patchedFile = path.join(TEST_DIR, 'example-patched.js');
+    await aiTools.writeFile(patchedFile, originalCode);
+    
+    // Apply the patch
+    const patchedCode = aiTools.applyDiff(originalCode, diffText);
+    await aiTools.writeFile(patchedFile, patchedCode);
+    
+    console.log('Patch applied to create:', patchedFile);
+    console.log('Example JavaScript file (patched)');
+  });
+  
+  await runExample('Optimize Prompt', () => {
+    // Create a sample prompt with system message, history, and query
+    const promptData = {
+      system: 'You are a helpful AI assistant that provides information about JavaScript programming.',
+      messages: [
+        { role: 'user', content: 'How do I use async/await in JavaScript?' },
+        { role: 'assistant', content: 'Async/await is a way to handle asynchronous operations in JavaScript. The async keyword is used to define an asynchronous function, which returns a Promise. The await keyword is used inside async functions to wait for a Promise to resolve before continuing execution. This makes asynchronous code look and behave more like synchronous code, which can be easier to understand and maintain.' },
+        { role: 'user', content: 'Can you show me an example?' },
+        { role: 'assistant', content: 'Sure, here\'s a simple example of using async/await to fetch data from an API:\n\n```javascript\nasync function fetchUserData(userId) {\n  try {\n    const response = await fetch(`https://api.example.com/users/${userId}`);\n    const data = await response.json();\n    return data;\n  } catch (error) {\n    console.error(\'Error fetching user data:\', error);\n    throw error;\n  }\n}\n\n// Using the async function\nfetchUserData(123)\n  .then(data => console.log(\'User data:\', data))\n  .catch(error => console.error(\'Failed to fetch user data:\', error));\n```\n\nIn this example, the `fetchUserData` function is declared as async, which allows us to use await inside it. We await the fetch call, which returns a Promise that resolves to the Response object. Then we await the response.json() call, which also returns a Promise that resolves to the parsed JSON data.' },
+        { role: 'user', content: 'How does error handling work with async/await?' }
+      ],
+      query: 'I want to understand how to handle errors when using async/await in JavaScript, particularly for API calls and other asynchronous operations.'
+    };
+    
+    // Optimize the prompt to fit within a token limit
+    const optimized = aiTools.optimizePrompt(promptData, {
+      model: 'claude-3-opus',
+      maxTokens: 500,
+      preserveQuery: true,
+      preserveSystem: true
+    });
+    
+    console.log('Original prompt data token count:', aiTools.countTokens(JSON.stringify(promptData)));
+    console.log('Optimized prompt data token count:', optimized.tokenCount);
+    console.log('Optimization ratio:', (optimized.tokenCount / aiTools.countTokens(JSON.stringify(promptData))).toFixed(2));
+    
+    return {
+      originalTokenCount: aiTools.countTokens(JSON.stringify(promptData)),
+      optimizedTokenCount: optimized.tokenCount,
+      tokensSaved: aiTools.countTokens(JSON.stringify(promptData)) - optimized.tokenCount,
+      optimized: optimized.optimized
+    };
+  });
+  
+  // 5. Caching Examples
+  await runExample('Cache Operations', async () => {
+    // Initialize cache with custom config
+    await aiTools.cacheUtils.initialize({
+      memoryCache: {
+        maxItems: 100,
+        ttl: 60 * 60 * 1000 // 1 hour
+      },
+      persistentCache: {
+        storageDir: path.join(TEST_DIR, 'cache')
+      }
+    });
+    
+    // Sample request parameters
+    const requestParams = {
+      prompt: 'What is the capital of France?',
+      model: 'claude-3-opus',
+      options: {
+        temperature: 0.7,
+        max_tokens: 100
+      }
+    };
+    
+    // Sample response
+    const response = {
+      content: 'The capital of France is Paris.',
+      model: 'claude-3-opus',
+      usage: {
+        prompt_tokens: 10,
+        completion_tokens: 8,
+        total_tokens: 18
+      }
+    };
+    
+    // Store in cache
+    await aiTools.setCachedResponse(requestParams, response);
+    console.log('Response stored in cache');
+    
+    // Retrieve from cache
+    const cachedResponse = await aiTools.getCachedResponse(requestParams);
+    console.log('Retrieved from cache:', cachedResponse ? 'Hit' : 'Miss');
+    
+    // Get cache stats
+    const stats = await aiTools.getCacheStats();
+    console.log('Cache stats:');
+    
+    return stats;
+  });
+  
+  // 6. Metrics Examples
+  await runExample('Metrics Collection', async () => {
+    // Initialize metrics
+    await aiTools.metricsUtils.initialize({
+      storageDir: path.join(TEST_DIR, 'metrics')
+    });
+    
+    // Record some metrics
+    aiTools.recordMetric('api', 'call', 1, {
+      tokens: { prompt: 100, completion: 50 },
+      costs: { prompt: 0.0015, completion: 0.00375 },
+      latency: 1200
+    });
+    
+    aiTools.recordMetric('cache', 'hit', 1, {
+      tokensSaved: 150,
+      costSaved: 0.00525
+    });
+    
+    aiTools.recordMetric('validation', 'success', 1);
+    
+    aiTools.recordMetric('optimization', 'prompt', 1, {
+      originalTokens: 1000,
+      optimizedTokens: 600,
+      tokensSaved: 400
+    });
+    
+    // Get metrics summary
+    const summary = aiTools.getMetricsSummary();
+    console.log('Metrics summary:');
+    
+    // Export metrics
+    const jsonMetrics = aiTools.exportMetrics('json');
+    console.log('Metrics exported as JSON');
+    
+    // Visualize metrics
+    const visualization = aiTools.visualizeMetrics(summary);
+    console.log('Metrics visualization:');
+    console.log(visualization);
+    
+    return {
+      apiCalls: summary.api.calls,
+      tokensSaved: summary.cache.tokensSaved + summary.optimization.tokensSaved,
+      costSaved: summary.cache.costSaved
+    };
+  });
+  
+  // 7. Project Management Examples
+  await runExample('Package.json Operations', async () => {
+    // Create a sample package.json
+    const packageJsonPath = path.join(TEST_DIR, 'package.json');
+    const packageJson = {
+      name: 'test-project',
       version: '1.0.0',
       description: 'Test project for AI Tools',
       main: 'index.js',
       scripts: {
-        test: 'echo "Error: no test specified" && exit 1',
-        start: 'node index.js'
+        test: 'echo "Error: no test specified" && exit 1'
       },
       dependencies: {
         'lodash': '^4.17.21'
       },
       devDependencies: {
-        'jest': '^29.5.0'
+        'jest': '^29.0.0'
       }
     };
     
-    console.log(`Writing package.json: ${packageJsonPath}`);
-    await aiTools.writeFile(packageJsonPath, packageJsonContent);
-    
-    // Create a subdirectory with files
-    const subDir = path.join(testDir, 'src');
-    await aiTools.createDirectory(subDir);
-    
-    const indexPath = path.join(subDir, 'index.js');
-    await aiTools.writeFile(indexPath, `// Main entry point\nconsole.log('Hello, world!');`);
-    
-    // ==========================================
-    // Context-Aware Reading & Summarization
-    // ==========================================
-    console.log('\n=== Context-Aware Reading & Summarization ===');
-    
-    // Read a chunk of a file
-    console.log(`\nReading chunk of file: ${jsFilePath} (lines 10-15)`);
-    const chunk = await aiTools.readFileChunk(jsFilePath, 10, 15);
-    console.log('Chunk content:');
-    console.log(chunk);
-    
-    // Read a section of a file
-    console.log(`\nReading section of file: ${jsFilePath} (between function calculateTotal and function formatPrice)`);
-    const section = await aiTools.readFileSection(
-      jsFilePath, 
-      'function calculateTotal', 
-      'function formatPrice',
-      { inclusive: false }
-    );
-    console.log('Section content:');
-    console.log(section);
-    
-    // Get file structure
-    console.log(`\nGetting file structure of: ${testDir}`);
-    const structure = await aiTools.getFileStructure(testDir, {
-      depth: 2,
-      includeStats: true
-    });
-    console.log('File structure:');
-    console.log(JSON.stringify(structure, null, 2));
-    
-    // Summarize a file
-    console.log(`\nSummarizing file: ${jsFilePath}`);
-    const fileSummary = await aiTools.summarizeFile(jsFilePath);
-    console.log('File summary:');
-    console.log(JSON.stringify(fileSummary, null, 2));
-    
-    // Summarize a directory
-    console.log(`\nSummarizing directory: ${testDir}`);
-    const dirSummary = await aiTools.summarizeDirectory(testDir, {
-      recursive: true,
-      maxDepth: 2
-    });
-    console.log('Directory summary:');
-    console.log(JSON.stringify(dirSummary, null, 2));
-    
-    // ==========================================
-    // Code-Specific Operations
-    // ==========================================
-    console.log('\n=== Code-Specific Operations ===');
-    
-    // Find a function
-    console.log(`\nFinding function 'calculateTotal' in: ${jsFilePath}`);
-    const calcFunction = await aiTools.findFunction(jsFilePath, 'calculateTotal');
-    console.log('Function found:');
-    console.log(calcFunction);
-    
-    // Find a class
-    console.log(`\nFinding class 'User' in: ${jsFilePath}`);
-    const userClass = await aiTools.findClass(jsFilePath, 'User');
-    console.log('Class found:');
-    console.log(userClass);
-    
-    // Replace a code block
-    console.log(`\nReplacing function 'formatPrice' in: ${jsFilePath}`);
-    const newFormatPrice = `function formatPrice(price, currency = '$') {
-  return currency + price.toFixed(2);
-}`;
-    
-    await aiTools.replaceCodeBlock(jsFilePath, 'function formatPrice', newFormatPrice, {
-      type: 'function',
-      backup: true
-    });
-    console.log('Function replaced. New content:');
-    const updatedContent = await aiTools.readFile(jsFilePath);
-    console.log(updatedContent);
-    
-    // Add an import
-    console.log(`\nAdding import to: ${jsFilePath}`);
-    await aiTools.addImport(jsFilePath, `import lodash from 'lodash';`);
-    console.log('Import added.');
-    
-    // ==========================================
-    // Project & Dependency Management
-    // ==========================================
-    console.log('\n=== Project & Dependency Management ===');
+    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
     
     // Read package.json
-    console.log(`\nReading package.json: ${packageJsonPath}`);
-    const packageJson = await aiTools.readPackageJson(testDir);
-    console.log('Package.json content:');
-    console.log(JSON.stringify(packageJson, null, 2));
+    const readPackageJson = await aiTools.readPackageJson(TEST_DIR);
+    console.log('Read package.json:');
+    console.log(readPackageJson);
     
     // Get dependencies
-    console.log(`\nGetting dependencies from: ${packageJsonPath}`);
-    const dependencies = await aiTools.getDependencies(testDir, {
-      dev: true,
-      includeVersions: true
-    });
+    const dependencies = await aiTools.getDependencies(TEST_DIR);
     console.log('Dependencies:');
-    console.log(JSON.stringify(dependencies, null, 2));
+    console.log(dependencies);
     
-    // Add a dependency (note: this would normally run npm install, but we'll skip that for the example)
-    console.log(`\nAdding dependency to: ${packageJsonPath}`);
-    await aiTools.addDependency('express', {
-      version: '^4.18.2',
-      install: false, // Skip npm install for this example
-      dirPath: testDir
-    });
-    console.log('Dependency added.');
+    // Add a dependency
+    await aiTools.addDependency('axios', true, TEST_DIR);
+    console.log('Added axios as a dev dependency');
     
     // Read updated package.json
-    const updatedPackageJson = await aiTools.readPackageJson(testDir);
+    const updatedPackageJson = await aiTools.readPackageJson(TEST_DIR);
     console.log('Updated package.json:');
-    console.log(JSON.stringify(updatedPackageJson, null, 2));
     
-    // ==========================================
-    // Execution & Validation (commented out for safety)
-    // ==========================================
-    console.log('\n=== Execution & Validation ===');
-    console.log('Note: Command execution examples are commented out for safety.');
-    
-    /*
-    // Run a shell command
-    console.log('\nRunning shell command: ls -la');
-    const cmdResult = await aiTools.runShellCommand('ls -la');
-    console.log('Command result:');
-    console.log(cmdResult);
-    
-    // Run an npm script (if available)
-    console.log('\nRunning npm script: start');
-    const scriptResult = await aiTools.runNpmScript('start', {
-      cwd: testDir
-    });
-    console.log('Script result:');
-    console.log(scriptResult);
-    */
-    
-    // Apply a patch (create a simple patch)
-    console.log('\nApplying a patch to a file');
-    const patchContent = `--- example.js
-+++ example.js
-@@ -1,4 +1,4 @@
- /**
-- * Example JavaScript file
-+ * Example JavaScript file (patched)
-  * Contains some functions and classes for testing
-  */`;
-    
-    await aiTools.applyPatch(jsFilePath, patchContent, {
-      backup: true
-    });
-    console.log('Patch applied.');
-    
-    // Read the patched file
-    const patchedContent = await aiTools.readFile(jsFilePath);
-    console.log('Patched file content:');
-    console.log(patchedContent.substring(0, 200) + '...'); // Show just the beginning
-    
-    console.log('\nAll advanced examples completed successfully!');
-    
-    // Clean up (uncomment to delete test directory)
-    /*
-    console.log(`\nCleaning up: deleting ${testDir}`);
-    await aiTools.deleteDirectory(testDir);
-    console.log('Cleanup complete.');
-    */
-  } catch (error) {
-    console.error('Error running advanced examples:', error);
-  }
+    return updatedPackageJson;
+  });
+  
+  console.log('\nAll advanced examples completed successfully!');
 }
 
-// Run the examples
-runAdvancedExamples();
+// Run all examples
+runAllExamples().catch(console.error);

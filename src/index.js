@@ -9,6 +9,10 @@ const contextUtils = require('./contextUtils');
 const codeUtils = require('./codeUtils');
 const execUtils = require('./execUtils');
 const projectUtils = require('./projectUtils');
+const validationUtils = require('./validationUtils');
+const cacheUtils = require('./cacheUtils');
+const tokenUtils = require('./tokenUtils');
+const metricsUtils = require('./metricsUtils');
 
 // Export all utilities
 module.exports = {
@@ -56,11 +60,43 @@ module.exports = {
   addDependency: projectUtils.addDependency,
   removeDependency: projectUtils.removeDependency,
   
+  // Schema validation
+  generateSchema: validationUtils.generateSchema,
+  validateInput: validationUtils.validateInput,
+  validateOutput: validationUtils.validateOutput,
+  validateWithWarnings: validationUtils.validateWithWarnings,
+  
+  // Caching
+  getCachedResponse: cacheUtils.getCachedResponse,
+  setCachedResponse: cacheUtils.setCachedResponse,
+  invalidateCache: cacheUtils.invalidateCache,
+  clearCache: cacheUtils.clearCache,
+  getCacheStats: cacheUtils.getCacheStats,
+  
+  // Token optimization
+  countTokens: tokenUtils.countTokens,
+  truncateToTokenLimit: tokenUtils.truncateToTokenLimit,
+  generateDiff: tokenUtils.generateDiff,
+  applyDiff: tokenUtils.applyDiff,
+  optimizePrompt: tokenUtils.optimizePrompt,
+  extractRelevantCode: tokenUtils.extractRelevantCode,
+  
+  // Metrics collection
+  recordMetric: metricsUtils.recordMetric,
+  getMetricsSummary: metricsUtils.getMetricsSummary,
+  resetMetrics: metricsUtils.resetMetrics,
+  exportMetrics: metricsUtils.exportMetrics,
+  visualizeMetrics: metricsUtils.visualizeMetrics,
+  
   // Export the modules themselves for advanced usage
   fileUtils,
   dirUtils,
   contextUtils,
   codeUtils,
   execUtils,
-  projectUtils
+  projectUtils,
+  validationUtils,
+  cacheUtils,
+  tokenUtils,
+  metricsUtils
 };

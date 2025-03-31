@@ -56,7 +56,9 @@ async function readFile(filePath, options = {}) {
  * @param {boolean} options.createDir - Whether to create directories if they don't exist (default: true)
  * @param {boolean} options.pretty - Whether to pretty-print JSON (default: true for objects)
  * @param {string} options.encoding - File encoding (default: 'utf8')
- * @returns {Promise<void>}
+ * @param {boolean} options.backup - Whether to create a backup before overwriting (default: false)
+ * @param {boolean} options.diff - Whether to return a diff of changes (default: false)
+ * @returns {Promise<Object>} - Result of the write operation
  */
 async function writeFile(filePath, content, options = {}) {
   try {
@@ -67,6 +69,8 @@ async function writeFile(filePath, content, options = {}) {
     const encoding = options.encoding || 'utf8';
     const createDir = options.createDir !== undefined ? options.createDir : true;
     const pretty = options.pretty !== undefined ? options.pretty : typeof content === 'object';
+    const backup = options.backup || false;
+    const generateDiff = options.diff || false;
     
     // Create directory if it doesn't exist
     if (createDir) {
@@ -85,8 +89,64 @@ async function writeFile(filePath, content, options = {}) {
       }
     }
     
+    // Initialize result object
+    const result = {
+      success: true,
+      filePath: resolvedPath,
+      created: false,
+      updated: false,
+      backupCreated: false
+    };
+    
+    // Check if file exists
+    const fileExists = await fs.pathExists(resolvedPath);
+    
+    // Generate diff if requested and file exists
+    let diff = null;
+    if (generateDiff && fileExists) {
+      try {
+        // Try to load the diff module
+        const diffModule = require('diff');
+        
+        // Read existing content
+        const existingContent = await fs.readFile(resolvedPath, { encoding });
+        
+        // Generate diff
+        diff = diffModule.createPatch(
+          path.basename(resolvedPath),
+          existingContent,
+          finalContent,
+          'Original',
+          'Modified'
+        );
+        
+        result.diff = diff;
+        result.hasChanges = existingContent !== finalContent;
+      } catch (diffError) {
+        console.warn(`Warning: Could not generate diff: ${diffError.message}`);
+      }
+    }
+    
+    // Create backup if requested and file exists
+    if (backup && fileExists) {
+      try {
+        const backupPath = `${resolvedPath}.bak`;
+        await fs.copy(resolvedPath, backupPath);
+        result.backupCreated = true;
+        result.backupPath = backupPath;
+      } catch (backupError) {
+        console.warn(`Warning: Could not create backup: ${backupError.message}`);
+      }
+    }
+    
     // Write the file
     await fs.writeFile(resolvedPath, finalContent, { encoding });
+    
+    // Update result
+    result.created = !fileExists;
+    result.updated = fileExists;
+    
+    return result;
   } catch (error) {
     throw new Error(`Error writing file ${filePath}: ${error.message}`);
   }
@@ -100,7 +160,7 @@ async function writeFile(filePath, content, options = {}) {
  * @param {boolean} options.createDir - Whether to create directories if they don't exist (default: true)
  * @param {boolean} options.pretty - Whether to pretty-print JSON (default: true for objects)
  * @param {string} options.encoding - File encoding (default: 'utf8')
- * @returns {Promise<void>}
+ * @returns {Promise<Object>} - Result of the append operation
  */
 async function appendFile(filePath, content, options = {}) {
   try {
@@ -129,8 +189,24 @@ async function appendFile(filePath, content, options = {}) {
       }
     }
     
+    // Initialize result object
+    const result = {
+      success: true,
+      filePath: resolvedPath,
+      created: false,
+      appended: true
+    };
+    
+    // Check if file exists
+    const fileExists = await fs.pathExists(resolvedPath);
+    
     // Append to the file
     await fs.appendFile(resolvedPath, finalContent, { encoding });
+    
+    // Update result
+    result.created = !fileExists;
+    
+    return result;
   } catch (error) {
     throw new Error(`Error appending to file ${filePath}: ${error.message}`);
   }
@@ -153,19 +229,31 @@ async function fileExists(filePath) {
 /**
  * Delete a file
  * @param {string} filePath - Path to the file to delete
- * @returns {Promise<void>}
+ * @returns {Promise<Object>} - Result of the delete operation
  */
 async function deleteFile(filePath) {
   try {
     const resolvedPath = path.resolve(filePath);
     
+    // Initialize result object
+    const result = {
+      success: true,
+      filePath: resolvedPath,
+      deleted: false
+    };
+    
     // Check if file exists
     if (!await fs.pathExists(resolvedPath)) {
-      throw new Error(`File not found: ${resolvedPath}`);
+      result.success = false;
+      result.error = `File not found: ${resolvedPath}`;
+      return result;
     }
     
     // Delete the file
     await fs.remove(resolvedPath);
+    result.deleted = true;
+    
+    return result;
   } catch (error) {
     throw new Error(`Error deleting file ${filePath}: ${error.message}`);
   }

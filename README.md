@@ -1,10 +1,10 @@
 # AI Tools
 
-A comprehensive collection of utilities designed for AI assistants and developers, providing enhanced file operations, code manipulation, execution capabilities, and project management tools.
+A comprehensive collection of utilities designed for AI assistants and developers, providing enhanced file operations, code manipulation, execution capabilities, project management tools, and cost-efficiency features.
 
 ## Overview
 
-AI Tools provides a set of utilities that simplify common operations with improved error handling and enhanced options. These tools are particularly useful for AI assistants that need to interact with the file system, manipulate code, execute commands, and manage projects in a robust and user-friendly way.
+AI Tools provides a set of utilities that simplify common operations with improved error handling and enhanced options. These tools are particularly useful for AI assistants that need to interact with the file system, manipulate code, execute commands, and manage projects in a robust and user-friendly way. Version 2.0 adds significant features for error reduction and cost efficiency.
 
 ## Features
 
@@ -44,6 +44,30 @@ AI Tools provides a set of utilities that simplify common operations with improv
   - Read and parse package.json
   - Get project dependencies
   - Add and remove dependencies
+
+- **Schema Validation** (New in 2.0)
+  - Automatic schema generation from sample data
+  - Schema versioning for API evolution
+  - Validation with support for warnings vs. critical errors
+  - Input/output validation for AI interactions
+
+- **Caching** (New in 2.0)
+  - Multi-level caching (memory and persistent)
+  - Intelligent cache invalidation
+  - Cache metrics and statistics
+  - Optimized for Anthropic API
+
+- **Token Optimization** (New in 2.0)
+  - Token counting for Anthropic models
+  - Smart text truncation with context preservation
+  - Diff-based updates for iterative changes
+  - Prompt optimization for token efficiency
+
+- **Metrics Collection** (New in 2.0)
+  - Comprehensive API usage metrics
+  - Cache performance tracking
+  - Token and cost savings measurement
+  - Visualization and reporting
 
 ## Installation
 
@@ -123,8 +147,19 @@ await aiTools.writeFile('data.json', { hello: 'world' });
 await aiTools.writeFile('file.txt', 'content', {
   createDir: true,  // Create parent directories if they don't exist
   pretty: true,     // Pretty-print JSON (for objects)
-  encoding: 'utf8'  // Specify encoding
+  encoding: 'utf8', // Specify encoding
+  backup: true,     // Create a backup before overwriting
+  diff: true        // Return a diff of changes
 });
+
+// Check the result of the write operation
+const result = await aiTools.writeFile('file.txt', 'content', { backup: true });
+console.log('File created:', result.created);
+console.log('File updated:', result.updated);
+console.log('Backup created:', result.backupCreated);
+if (result.backupCreated) {
+  console.log('Backup path:', result.backupPath);
+}
 ```
 
 #### appendFile(filePath, content, options)
@@ -137,6 +172,11 @@ await aiTools.appendFile('file.txt', '\nNew line');
 
 // Append JSON data (automatic stringification)
 await aiTools.appendFile('data.json', { newKey: 'newValue' });
+
+// Check the result of the append operation
+const result = await aiTools.appendFile('file.txt', '\nNew line');
+console.log('File created:', result.created);
+console.log('Content appended:', result.appended);
 ```
 
 #### fileExists(filePath)
@@ -155,7 +195,16 @@ if (exists) {
 Deletes a file safely.
 
 ```javascript
+// Delete a file
 await aiTools.deleteFile('file.txt');
+
+// Check the result of the delete operation
+const result = await aiTools.deleteFile('file.txt');
+console.log('Operation successful:', result.success);
+console.log('File deleted:', result.deleted);
+if (!result.success) {
+  console.log('Error:', result.error);
+}
 ```
 
 ### Directory Utilities
@@ -607,6 +656,435 @@ await aiTools.removeDependency('jest', {
 });
 ```
 
+### Schema Validation
+
+#### generateSchema(sampleData, options)
+
+Automatically generates a JSON Schema from sample data.
+
+```javascript
+// Generate a schema from sample data
+const sampleData = {
+  user: {
+    name: 'John Doe',
+    email: 'john@example.com',
+    age: 30
+  },
+  items: [
+    { id: 1, name: 'Item 1', price: 10.99 }
+  ]
+};
+
+const schema = aiTools.generateSchema(sampleData, {
+  id: 'order',
+  title: 'Order Schema',
+  description: 'Schema for order data',
+  required: {
+    'user.name': true,
+    'user.email': true
+  },
+  critical: {
+    'user.email': true
+  }
+});
+```
+
+#### validateInput(interactionType, data)
+
+Validates input data before sending to AI, with automatic schema generation.
+
+```javascript
+// Validate input data
+const inputData = {
+  prompt: 'Generate a function to calculate factorial',
+  options: {
+    temperature: 0.7,
+    max_tokens: 500
+  }
+};
+
+const validationResult = await aiTools.validateInput('code-generation', inputData);
+if (validationResult.valid) {
+  console.log('Input is valid');
+} else {
+  console.log('Validation errors:', validationResult.errors);
+  console.log('Validation warnings:', validationResult.warnings);
+}
+```
+
+#### validateOutput(interactionType, data)
+
+Validates output data from AI, with automatic schema generation.
+
+```javascript
+// Validate AI response
+const aiResponse = {
+  content: 'function factorial(n) { return n <= 1 ? 1 : n * factorial(n-1); }',
+  model: 'claude-3-opus',
+  usage: {
+    prompt_tokens: 15,
+    completion_tokens: 12
+  }
+};
+
+const validationResult = await aiTools.validateOutput('code-generation', aiResponse);
+if (validationResult.valid) {
+  console.log('Output is valid');
+} else {
+  console.log('Validation errors:', validationResult.errors);
+  console.log('Validation warnings:', validationResult.warnings);
+}
+```
+
+#### validateWithWarnings(data, schema)
+
+Validates data against a schema with support for warnings vs. critical errors.
+
+```javascript
+// Validate data with warnings
+const data = {
+  user: {
+    name: 'Jane Doe',
+    // Missing email (critical)
+    age: 'twenty-five' // Wrong type (warning)
+  }
+};
+
+const schema = aiTools.generateSchema(data, {
+  required: {
+    'user.email': true
+  },
+  critical: {
+    'user.email': true
+  }
+});
+
+const result = await aiTools.validateWithWarnings(data, schema);
+console.log('Valid:', result.valid);
+console.log('Critical errors:', result.errors);
+console.log('Warnings:', result.warnings);
+```
+
+### Caching
+
+#### getCachedResponse(params)
+
+Retrieves a cached response based on request parameters.
+
+```javascript
+// Get a cached response
+const requestParams = {
+  prompt: 'What is the capital of France?',
+  model: 'claude-3-opus',
+  options: {
+    temperature: 0.7
+  }
+};
+
+const cachedResponse = await aiTools.getCachedResponse(requestParams);
+if (cachedResponse) {
+  console.log('Cache hit:', cachedResponse);
+} else {
+  console.log('Cache miss');
+  // Make API call and then cache the response
+}
+```
+
+#### setCachedResponse(params, response)
+
+Stores a response in the cache.
+
+```javascript
+// Store a response in the cache
+const requestParams = {
+  prompt: 'What is the capital of France?',
+  model: 'claude-3-opus',
+  options: {
+    temperature: 0.7
+  }
+};
+
+const response = {
+  content: 'The capital of France is Paris.',
+  model: 'claude-3-opus',
+  usage: {
+    prompt_tokens: 10,
+    completion_tokens: 8
+  }
+};
+
+await aiTools.setCachedResponse(requestParams, response);
+```
+
+#### invalidateCache(options)
+
+Invalidates cache entries based on various criteria.
+
+```javascript
+// Invalidate specific cache entry
+await aiTools.invalidateCache({ key: 'specific-cache-key' });
+
+// Invalidate by prompt pattern
+await aiTools.invalidateCache({ 
+  promptPattern: /capital of France/i 
+});
+
+// Invalidate by model
+await aiTools.invalidateCache({ model: 'claude-3-opus' });
+
+// Invalidate entries older than a timestamp
+await aiTools.invalidateCache({ 
+  olderThan: Date.now() - (24 * 60 * 60 * 1000) // 24 hours ago
+});
+```
+
+#### clearCache()
+
+Clears the entire cache.
+
+```javascript
+// Clear the entire cache
+await aiTools.clearCache();
+```
+
+#### getCacheStats()
+
+Gets cache statistics and metrics.
+
+```javascript
+// Get cache statistics
+const stats = await aiTools.getCacheStats();
+console.log('Cache stats:', stats);
+console.log('Memory cache size:', stats.memory.size);
+console.log('Hit rate:', stats.hitRate.overall);
+console.log('Tokens saved:', stats.metrics.tokensSaved);
+console.log('Cost saved:', stats.metrics.costSaved);
+```
+
+### Token Optimization
+
+#### countTokens(text, model)
+
+Counts tokens for a string (Anthropic-specific).
+
+```javascript
+// Count tokens in a text
+const text = 'This is a sample text that will be used to estimate token count.';
+const tokenCount = aiTools.countTokens(text, 'claude-3-opus');
+console.log(`Estimated token count: ${tokenCount}`);
+```
+
+#### truncateToTokenLimit(text, maxTokens, options)
+
+Truncates text to fit within a token limit while preserving context.
+
+```javascript
+// Truncate text to fit token limit
+const longText = 'This is a very long text that needs to be truncated...';
+const truncated = aiTools.truncateToTokenLimit(longText, 20, {
+  model: 'claude-3-opus',
+  preserveStart: true,
+  preserveEnd: true,
+  startRatio: 0.7
+});
+
+console.log('Truncated text:', truncated.text);
+console.log('Token count:', truncated.tokenCount);
+```
+
+#### generateDiff(originalText, newText, options)
+
+Generates a diff between two texts.
+
+```javascript
+// Generate a diff
+const originalCode = 'function add(a, b) {\n  return a + b;\n}';
+const newCode = 'function add(a, b) {\n  // Add two numbers\n  return a + b;\n}';
+
+const diff = aiTools.generateDiff(originalCode, newCode);
+console.log('Diff:', diff);
+```
+
+#### applyDiff(originalText, diffText)
+
+Applies a diff to original text.
+
+```javascript
+// Apply a diff
+const originalCode = 'function add(a, b) {\n  return a + b;\n}';
+const diffText = '--- text\n+++ text\n@@ -1,3 +1,4 @@\n function add(a, b) {\n+  // Add two numbers\n   return a + b;\n }';
+
+const patchedCode = aiTools.applyDiff(originalCode, diffText);
+console.log('Patched code:', patchedCode);
+```
+
+#### optimizePrompt(promptData, options)
+
+Optimizes a prompt to fit within token limits.
+
+```javascript
+// Optimize a prompt
+const promptData = {
+  system: 'You are a helpful AI assistant.',
+  messages: [
+    { role: 'user', content: 'Tell me about JavaScript.' },
+    { role: 'assistant', content: 'JavaScript is a programming language...' },
+    { role: 'user', content: 'How do I use async/await?' }
+  ],
+  query: 'Can you show me an example of async/await in JavaScript?'
+};
+
+const optimized = aiTools.optimizePrompt(promptData, {
+  model: 'claude-3-opus',
+  maxTokens: 500,
+  preserveQuery: true,
+  preserveSystem: true
+});
+
+console.log('Original token count:', aiTools.countTokens(JSON.stringify(promptData)));
+console.log('Optimized token count:', optimized.tokenCount);
+console.log('Tokens saved:', aiTools.countTokens(JSON.stringify(promptData)) - optimized.tokenCount);
+```
+
+#### extractRelevantCode(code, query, options)
+
+Extracts relevant sections from code based on a query.
+
+```javascript
+// Extract relevant code sections
+const code = `
+// Import modules
+import React from 'react';
+
+// Component for user profile
+function UserProfile({ user }) {
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{user.email}</p>
+    </div>
+  );
+}
+
+// Component for user list
+function UserList({ users }) {
+  return (
+    <ul>
+      {users.map(user => (
+        <li key={user.id}>{user.name}</li>
+      ))}
+    </ul>
+  );
+}
+`;
+
+const relevantSections = aiTools.extractRelevantCode(code, 'user profile component', {
+  language: 'javascript',
+  maxTokens: 100,
+  contextLines: 2
+});
+
+console.log('Relevant sections:', relevantSections);
+```
+
+### Metrics Collection
+
+#### recordMetric(category, name, value, metadata)
+
+Records a metric data point.
+
+```javascript
+// Record API call metric
+aiTools.recordMetric('api', 'call', 1, {
+  tokens: { prompt: 100, completion: 50 },
+  costs: { prompt: 0.0015, completion: 0.00375 },
+  latency: 1200
+});
+
+// Record cache hit metric
+aiTools.recordMetric('cache', 'hit', 1, {
+  tokensSaved: 150,
+  costSaved: 0.00525
+});
+
+// Record validation metric
+aiTools.recordMetric('validation', 'success', 1);
+
+// Record optimization metric
+aiTools.recordMetric('optimization', 'prompt', 1, {
+  originalTokens: 1000,
+  optimizedTokens: 600,
+  tokensSaved: 400
+});
+```
+
+#### getMetricsSummary(options)
+
+Gets a summary of collected metrics.
+
+```javascript
+// Get all metrics
+const allMetrics = aiTools.getMetricsSummary();
+console.log('All metrics:', allMetrics);
+
+// Get metrics for a specific time range
+const recentMetrics = aiTools.getMetricsSummary({
+  timeRange: 60 * 60 * 1000 // Last hour
+});
+console.log('Recent metrics:', recentMetrics);
+
+// Get metrics for a specific category
+const apiMetrics = aiTools.getMetricsSummary({
+  category: 'api'
+});
+console.log('API metrics:', apiMetrics);
+```
+
+#### resetMetrics(options)
+
+Resets metrics.
+
+```javascript
+// Reset all metrics
+aiTools.resetMetrics();
+
+// Reset metrics but keep detailed entries
+aiTools.resetMetrics({ keepEntries: true });
+```
+
+#### exportMetrics(format, options)
+
+Exports metrics in various formats.
+
+```javascript
+// Export metrics as JSON
+const jsonMetrics = aiTools.exportMetrics('json');
+console.log('JSON metrics:', jsonMetrics);
+
+// Export metrics as CSV
+const csvMetrics = aiTools.exportMetrics('csv');
+console.log('CSV metrics:', csvMetrics);
+
+// Export with time range
+const recentMetrics = aiTools.exportMetrics('json', {
+  timeRange: 24 * 60 * 60 * 1000 // Last 24 hours
+});
+```
+
+#### visualizeMetrics(metrics, options)
+
+Generates a simple ASCII visualization of metrics.
+
+```javascript
+// Visualize metrics
+const metrics = aiTools.getMetricsSummary();
+const visualization = aiTools.visualizeMetrics(metrics, {
+  width: 80,
+  height: 20
+});
+console.log(visualization);
+```
+
 ## Advanced Usage
 
 For advanced usage, you can access the underlying modules directly:
@@ -618,12 +1096,18 @@ const {
   contextUtils, 
   codeUtils, 
   execUtils, 
-  projectUtils 
+  projectUtils,
+  validationUtils,
+  cacheUtils,
+  tokenUtils,
+  metricsUtils
 } = require('ai-tools');
 
 // Use specific module functions
 const result = await fileUtils.readFile('file.txt');
 const codeBlock = await codeUtils.findFunction('file.js', 'calculateTotal');
+const schema = validationUtils.generateSchema(sampleData);
+const tokenCount = tokenUtils.countTokens('Sample text');
 ```
 
 ## Error Handling
