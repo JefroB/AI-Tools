@@ -4,7 +4,7 @@ A comprehensive collection of utilities designed for AI assistants and developer
 
 ## Overview
 
-AI Tools provides a set of utilities that simplify common operations with improved error handling and enhanced options. These tools are particularly useful for AI assistants that need to interact with the file system, manipulate code, execute commands, and manage projects in a robust and user-friendly way. Version 3.0 adds significant features for API optimization, security scanning, UI testing, and Jira integration.
+AI Tools provides a set of utilities that simplify common operations with improved error handling and enhanced options. These tools are particularly useful for AI assistants that need to interact with the file system, manipulate code, execute commands, and manage projects in a robust and user-friendly way. Version 3.0 adds significant features for API optimization, security scanning, UI testing, and external API integration.
 
 ## Features
 
@@ -82,11 +82,11 @@ AI Tools provides a set of utilities that simplify common operations with improv
   - Rate limiting and throttling
   - Request deduplication and caching
 
-- **Jira Integration** (New in 3.0)
-  - Extract Jira references from text
-  - Memoize Jira API calls
-  - Build dependency graphs of Jira issues
-  - Extract blocking references
+- **External API Integration** (New in 3.0)
+  - Extract references from text (e.g., issue IDs, tickets)
+  - Memoize API calls for improved performance
+  - Build dependency graphs from structured data
+  - Extract relationship references from context
 
 - **UI Testing** (New in 3.0)
   - Test color contrast for accessibility
@@ -197,10 +197,12 @@ const throttledFetch = aiTools.throttleApiCalls(
 const data = await throttledFetch('endpoint');
 ```
 
-### Jira Integration
+### External API Integration
+
+The library provides tools for integrating with external APIs. While the examples below use Jira, the same patterns and techniques can be applied to any external API system.
 
 ```javascript
-// Extract Jira references from text
+// Extract references from text (example using Jira format)
 const text = `
   We need to fix the bug described in PROJ-123 before we can implement
   the feature requested in PROJ-456. This is related to the epic EPIC-789.
@@ -210,11 +212,11 @@ const text = `
 const references = aiTools.extractJiraReferences(text);
 // ['PROJ-123', 'PROJ-456', 'EPIC-789']
 
-// Extract blocking references
+// Extract relationship references from context
 const blockingRefs = aiTools.extractBlockingReferences(text);
 // [{ key: 'PROJ-123', context: '...bug described in PROJ-123 before we can implement...' }]
 
-// Create a Jira client with retry, throttling, and memoization
+// Create an API client with retry, throttling, and memoization
 const jiraClient = aiTools.createJiraClient(
   fetchJiraIssue,
   {
@@ -224,7 +226,7 @@ const jiraClient = aiTools.createJiraClient(
   }
 );
 
-// Build a dependency graph
+// Build a dependency graph from structured data
 const graph = await aiTools.buildIssueDependencyGraph('PROJ-123', jiraClient, {
   maxDepth: 2,
   relationshipTypes: ['is blocked by', 'blocks', 'relates to']
