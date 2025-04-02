@@ -1,16 +1,16 @@
 {
   "name": "ai-tools",
-  "version": "25.091.C.1002",
+  "version": "25.094.C.1005",
   "description": "Comprehensive utility tools for AI assistants with error reduction and cost efficiency features",
   "main": "src/index.js",
   "versionDetails": {
     "year": 2025,
-    "dayOfYear": 91,
-    "date": "2025-04-01",
+    "dayOfYear": 94,
+    "date": "2025-04-02",
     "major": "C",
     "feature": {
       "category": "Core functionality",
-      "build": 2
+      "build": 5
     }
   },
   "scripts": {
@@ -20,6 +20,8 @@
     "advanced-example": "node examples/advanced-usage.js",
     "memoize-demo": "node examples/memoize-demo.js",
     "version-demo": "node examples/version-utils-demo.js",
+    "git-workflow-demo": "node git-workflow-demo.js",
+    "prompt-style-demo": "node prompt-style-manager-demo.js",
     "validate-version": "node scripts/validate-version.js",
     "bump-version": "node scripts/bump-version.js",
     "bump-version:major": "node scripts/bump-version.js --major",
@@ -37,11 +39,18 @@
     "execution",
     "memoization",
     "cache",
-    "performance"
+    "performance",
+    "git",
+    "workflow",
+    "automation",
+    "github",
+    "branch",
+    "commit"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@octokit/rest": "^19.0.13",
     "ajv": "^8.17.1",
     "axios": "latest",
     "chalk": "^4.1.2",

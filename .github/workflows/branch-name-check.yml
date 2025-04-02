@@ -1,0 +1,28 @@
+name: Branch Name Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "Checking branch name: $BRANCH_NAME"
+          
+          # Define the pattern for valid branch names
+          PATTERN="^(feature|fix|refactor|docs|chore)/[a-z0-9-]+$"
+          
+          if [[ ! $BRANCH_NAME =~ $PATTERN ]]; then
+            echo "::error::Branch name '$BRANCH_NAME' does not follow the required format."
+            echo "::error::Branch names must follow the format: <type>/<short-description>"
+            echo "::error::Where <type> is one of: feature, fix, refactor, docs, chore"
+            echo "::error::And <short-description> is a brief, hyphenated description of the changes."
+            echo "::error::Examples: feature/add-token-counting, fix/cache-invalidation-bug"
+            exit 1
+          fi
+          
+          echo "Branch name is valid!"

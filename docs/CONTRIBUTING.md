@@ -1,147 +1,108 @@
 # Contributing to AI-Tools
 
-Thank you for your interest in contributing to the AI-Tools project! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to AI-Tools! This document outlines the guidelines and workflows we use to maintain code quality and consistency in our repository.
 
 ## Table of Contents
 
-1. [Code of Conduct](#code-of-conduct)
-2. [Getting Started](#getting-started)
-3. [Development Workflow](#development-workflow)
-4. [Versioning Requirements](#versioning-requirements)
-5. [Pull Request Process](#pull-request-process)
-6. [Coding Standards](#coding-standards)
-7. [Testing](#testing)
-8. [Documentation](#documentation)
+- [Git Workflow](#git-workflow)
+  - [Branch Naming Convention](#branch-naming-convention)
+  - [Commit Message Convention](#commit-message-convention)
+- [Pull Request Process](#pull-request-process)
+  - [Code Review Requirements](#code-review-requirements)
+- [AI-Assisted Development](#ai-assisted-development)
 
-## Code of Conduct
+## Git Workflow
 
-Please be respectful and considerate of others when contributing to this project. We aim to foster an inclusive and welcoming community.
+### Branch Naming Convention
 
-## Getting Started
-
-1. Fork the repository
-2. Clone your fork: `git clone https://github.com/your-username/AI-Tools.git`
-3. Install dependencies: `npm install`
-4. Create a new branch for your changes: `git checkout -b feature/your-feature-name`
-
-## Development Workflow
-
-1. Make your changes
-2. Run tests: `npm test`
-3. Ensure code quality: `npm run lint`
-4. Update documentation as needed
-5. Commit your changes (see [Commit Message Guidelines](#commit-message-guidelines))
-6. Push to your fork
-7. Submit a pull request
-
-## Versioning Requirements
-
-> **IMPORTANT: The AI-Tools project uses a mandatory versioning system.**
-
-All contributions that affect the version number must follow the AI-Tools versioning system as described in [VERSIONING.md](./VERSIONING.md). No other versioning format is permitted.
-
-### Version Format
+All changes to the codebase MUST be made on a dedicated branch (not directly on `master`). Branch names MUST follow this format:
 
 ```
-YY.DDD.LETTER.FEATURE
+<type>/<short-description>
 ```
 
-Where:
-- **YY**: Last two digits of the year
-- **DDD**: Day of the year (001-366)
-- **LETTER**: Alphabetic major version (A-Z, then AA-ZZ)
-- **FEATURE**: Feature/build identifier (1000-9999)
+Where `<type>` is one of:
 
-### Bumping the Version
+- `feature`: For new features or functionality
+- `fix`: For bug fixes
+- `refactor`: For code refactoring (no new functionality)
+- `docs`: For documentation changes
+- `chore`: For other maintenance tasks (e.g., dependency updates, build changes)
 
-The project provides utilities to help you bump the version correctly:
+And `<short-description>` is a brief, hyphenated description of the changes.
 
-```bash
-# Bump build number by 1 (default)
-npm run bump-version
+**Examples of valid branch names:**
+- `feature/add-token-counting`
+- `fix/cache-invalidation-bug`
+- `refactor/prompt-truncation-logic`
+- `docs/update-readme`
+- `chore/update-dependencies`
 
-# Bump major version (e.g., C -> D)
-npm run bump-version:major
+### Commit Message Convention
 
-# Set feature category to documentation (5)
-npm run bump-version:docs
+Commit messages should be clear and descriptive, following this format:
 
-# Set feature category to bug fix (7)
-npm run bump-version:fix
-
-# Custom bump with specific category and build number
-npm run bump-version -- --category=2 --build=345
+```
+<type>: <description>
 ```
 
-### Version Validation
+Where `<type>` is the same as for branch names, and `<description>` is a concise description of the changes.
 
-Before submitting a pull request, validate your version:
+**Examples of valid commit messages:**
+- `feat: Add token counting functionality`
+- `fix: Fix cache invalidation issue`
+- `refactor: Refactor prompt truncation logic`
+- `docs: Update README with usage instructions`
+- `chore: Update dependencies to latest versions`
 
-```bash
-npm run validate-version
+For more complex changes, you can add a body to the commit message:
+
 ```
+<type>: <description>
 
-This validation is automatically run as part of the pre-commit hook.
+<body>
+```
 
 ## Pull Request Process
 
-1. Ensure your code passes all tests and linting
-2. Update documentation as needed
-3. Bump the version according to the versioning requirements
-4. Submit your pull request with a clear description of the changes
-5. Wait for review and address any feedback
+1. Create a new branch following the [branch naming convention](#branch-naming-convention)
+2. Make your changes on this branch
+3. Commit your changes following the [commit message convention](#commit-message-convention)
+4. Push your branch to the remote repository
+5. Create a Pull Request (PR) from your branch to `master`
+6. Wait for code review and approval
+7. Once approved, merge your PR into `master`
 
-## Commit Message Guidelines
+### Code Review Requirements
 
-We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+**All PRs MUST be reviewed and approved by at least one team member before merging, even for the code owner.**
 
-```
-<type>(<scope>): <description>
+This requirement ensures:
+- Code quality and adherence to best practices
+- Knowledge sharing among team members
+- Catching potential issues before they reach the main codebase
 
-[optional body]
+While another team member's approval is mandatory, the code owner has the final say. If there are disagreements or concerns, the code owner's decision prevails.
 
-[optional footer]
-```
+## AI-Assisted Development
 
-Types:
-- **feat**: A new feature
-- **fix**: A bug fix
-- **docs**: Documentation changes
-- **style**: Code style changes (formatting, etc.)
-- **refactor**: Code changes that neither fix bugs nor add features
-- **perf**: Performance improvements
-- **test**: Adding or updating tests
-- **chore**: Changes to the build process or tools
+When using AI tools (like Claude) to assist with development:
 
-Example:
-```
-feat(api): add new endpoint for user authentication
+1. Each set of changes resulting from an AI-assisted task MUST be committed to a dedicated branch following our [branch naming convention](#branch-naming-convention)
+2. The branch MUST be pushed to GitHub and a PR created
+3. The PR MUST go through the standard code review process
+4. No AI-generated code should be merged directly to `master` without review
 
-This adds a new endpoint for user authentication using JWT tokens.
+### Automated Workflow
 
-Closes #123
-```
+Our repository includes GitHub Actions workflows that automatically enforce:
 
-## Coding Standards
+1. Branch naming conventions
+2. Commit message formats
+3. Required reviews before merging
 
-- Follow the existing code style
-- Use meaningful variable and function names
-- Write clear comments for complex logic
-- Follow the Single Responsibility Principle
-- Keep functions small and focused
-- See [RefactoringGuidelines.md](./RefactoringGuidelines.md) for more details
+These workflows help maintain consistency and quality in our codebase.
 
-## Testing
+## Questions?
 
-- Write tests for all new features and bug fixes
-- Ensure all tests pass before submitting a pull request
-- Aim for high test coverage
-
-## Documentation
-
-- Update documentation for all new features and changes
-- Use clear and concise language
-- Include examples where appropriate
-- Keep the README.md up to date
-
-Thank you for contributing to AI-Tools!
+If you have any questions about the contribution process, please reach out to the repository maintainers.

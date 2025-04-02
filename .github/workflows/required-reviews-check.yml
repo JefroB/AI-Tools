@@ -1,0 +1,57 @@
+name: Required Reviews Check
+
+on:
+  pull_request_review:
+    types: [submitted]
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  check-required-reviews:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for required reviews
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo, number } = context.issue;
+            
+            // Get PR details
+            const pr = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: number
+            });
+            
+            // Get PR reviews
+            const reviews = await github.rest.pulls.listReviews({
+              owner,
+              repo,
+              pull_number: number
+            });
+            
+            // Get the PR author
+            const prAuthor = pr.data.user.login;
+            
+            // Filter for approved reviews from users other than the PR author
+            const approvedReviews = reviews.data.filter(review => 
+              review.state === 'APPROVED' && review.user.login !== prAuthor
+            );
+            
+            console.log(`PR #${number} by ${prAuthor} has ${approvedReviews.length} approved reviews from other users`);
+            
+            // Check if there's at least one approved review from someone other than the author
+            if (approvedReviews.length === 0) {
+              console.log('No approved reviews from other team members found');
+              
+              // Don't fail the check if the PR is just opened or synchronized
+              // This allows the PR to be created and updated without immediately failing
+              if (context.payload.action === 'submitted') {
+                core.setFailed('This PR requires at least one approval from another team member before it can be merged.');
+              } else {
+                console.log('This PR will require at least one approval from another team member before it can be merged.');
+              }
+            } else {
+              console.log('Required reviews check passed!');
+            }
