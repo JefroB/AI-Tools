@@ -22,6 +22,14 @@ jobs:
       - name: Install dependencies
         run: npm install --no-package-lock
 
+      - name: Create configurationManager.js symlink
+        run: |
+          # Create a symlink with the correct case to handle case-sensitivity issues
+          if [ -f src/configurationManager.js ]; then
+            cp src/configurationManager.js src/ConfigurationManager.js
+            echo "Created ConfigurationManager.js copy"
+          fi
+
       - name: Generate code review
         uses: actions/github-script@v6
         env:
@@ -38,8 +46,22 @@ jobs:
             const fs = require('fs');
             const path = require('path');
             
-            // Import the code reviewer module
-            const codeReviewer = require('./src/codeReviewer');
+            try {
+              // Import the code reviewer module
+              const codeReviewer = require('./src/codeReviewer');
+            } catch (error) {
+              console.error(`Error importing codeReviewer: ${error.message}`);
+              console.log('Creating a simple comment instead of full review');
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: "## Code Review\n\nUnable to run full code review due to module loading issues. Please check the GitHub Actions logs for details."
+              });
+              
+              return;
+            }
             
             // Initialize the code reviewer
             await codeReviewer.initialize({
