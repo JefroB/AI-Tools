@@ -5,6 +5,18 @@ All notable changes to the AI-Tools project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to the custom versioning system described in [VERSIONING.md](./docs/VERSIONING.md).
 
+## [25.093.C.1004] - 2025-04-02
+
+### Added
+- **Prompt Style Manager**
+  - Token counting for different AI models
+  - Prompt usage logging with metadata
+  - Prompt style analysis to identify patterns
+  - Usage statistics tracking
+  - Integration with existing metrics system
+  - Comprehensive documentation in [PROMPT_STYLE_MANAGER.md](./docs/PROMPT_STYLE_MANAGER.md)
+  - Demo script in prompt-style-manager-demo.js
+
 ## [25.092.C.1003] - 2025-04-02
 
 ### Added

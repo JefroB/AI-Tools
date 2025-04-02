@@ -30,6 +30,7 @@ const configurationManager = require('./configurationManager');
 const enhancedErrorHandling = require('./enhancedErrorHandling');
 const promptEngineering = require('./promptEngineering');
 const contextLengthManager = require('./contextLengthManager');
+const promptStyleManager = require('./promptStyleManager');
 
 // Export all utilities
 module.exports = {
@@ -291,5 +292,14 @@ module.exports = {
   processInChunks: contextLengthManager.processInChunks,
   
   // Export the context length manager module itself for advanced usage
-  contextLengthManager
+  contextLengthManager,
+  
+  // Prompt Style Manager utilities
+  countPromptTokens: promptStyleManager.countTokens,
+  logPromptUsage: promptStyleManager.logPrompt,
+  getPromptUsageStats: promptStyleManager.getPromptUsageStats,
+  analyzePromptStyle: promptStyleManager.analyzePromptStyle,
+  
+  // Export the prompt style manager module itself for advanced usage
+  promptStyleManager
 };
