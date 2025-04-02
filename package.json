@@ -1,16 +1,16 @@
 {
   "name": "ai-tools",
-  "version": "25.095.C.1006",
+  "version": "25.091.D.1000",
   "description": "Comprehensive utility tools for AI assistants with error reduction and cost efficiency features",
   "main": "src/index.js",
   "versionDetails": {
     "year": 2025,
-    "dayOfYear": 95,
-    "date": "2025-04-02",
-    "major": "C",
+    "dayOfYear": 91,
+    "date": "2025-04-01",
+    "major": "D",
     "feature": {
       "category": "Core functionality",
-      "build": 6
+      "build": 0
     }
   },
   "scripts": {
