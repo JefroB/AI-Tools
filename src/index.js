@@ -13,6 +13,13 @@ const validationUtils = require('./validationUtils');
 const cacheUtils = require('./cacheUtils');
 const tokenUtils = require('./tokenUtils');
 const metricsUtils = require('./metricsUtils');
+const memoizeUtils = require('./memoizeUtils');
+const apiUtils = require('./apiUtils');
+const jiraUtils = require('./jiraUtils');
+const uiTestUtils = require('./uiTestUtils');
+const securityUtils = require('./securityUtils');
+const versionUtils = require('./versionUtils');
+const attributionUtils = require('./attributionUtils');
 
 // Export all utilities
 module.exports = {
@@ -88,6 +95,45 @@ module.exports = {
   exportMetrics: metricsUtils.exportMetrics,
   visualizeMetrics: metricsUtils.visualizeMetrics,
   
+  // Memoization utilities
+  memoize: memoizeUtils.memoize,
+  memoizeAsync: memoizeUtils.memoizeAsync,
+  memoizeMethod: memoizeUtils.memoizeMethod,
+  clearMemoCache: memoizeUtils.clearMemoCache,
+  getMemoStats: memoizeUtils.getMemoStats,
+  resetMemoStats: memoizeUtils.resetMemoStats,
+  
+  // API request optimization
+  batchRequests: apiUtils.batchRequests,
+  retryWithBackoff: apiUtils.retryWithBackoff,
+  throttleApiCalls: apiUtils.throttleApiCalls,
+  generateApiCacheKey: apiUtils.generateApiCacheKey,
+  debounce: apiUtils.debounce,
+  
+  // Jira integration utilities
+  extractJiraReferences: jiraUtils.extractJiraReferences,
+  memoizeJiraCall: jiraUtils.memoizeJiraCall,
+  buildIssueDependencyGraph: jiraUtils.buildIssueDependencyGraph,
+  createJiraClient: jiraUtils.createJiraClient,
+  extractBlockingReferences: jiraUtils.extractBlockingReferences,
+  
+  // UI testing utilities
+  testColorContrast: uiTestUtils.testColorContrast,
+  validateColorDistinction: uiTestUtils.validateColorDistinction,
+  parseColor: uiTestUtils.parseColor,
+  rgbToHsl: uiTestUtils.rgbToHsl,
+  hslToRgb: uiTestUtils.hslToRgb,
+  calculateContrastRatio: uiTestUtils.calculateContrastRatio,
+  adjustColorForContrast: uiTestUtils.adjustColorForContrast,
+  
+  // Security utilities
+  scanForVulnerabilities: securityUtils.scanForVulnerabilities,
+  sanitizeInput: securityUtils.sanitizeInput,
+  validatePassword: securityUtils.validatePassword,
+  generateSecurePassword: securityUtils.generateSecurePassword,
+  isSafeUrl: securityUtils.isSafeUrl,
+  createCSP: securityUtils.createCSP,
+  
   // Export the modules themselves for advanced usage
   fileUtils,
   dirUtils,
@@ -98,5 +144,32 @@ module.exports = {
   validationUtils,
   cacheUtils,
   tokenUtils,
-  metricsUtils
+  metricsUtils,
+  memoizeUtils,
+  apiUtils,
+  jiraUtils,
+  uiTestUtils,
+  securityUtils,
+  
+  // Version utilities
+  generateVersion: versionUtils.generateVersion,
+  parseVersion: versionUtils.parseVersion,
+  formatVersion: versionUtils.formatVersion,
+  compareVersions: versionUtils.compareVersions,
+  getCurrentVersion: versionUtils.getCurrentVersion,
+  updateVersion: versionUtils.updateVersion,
+  
+  // Export the version module itself for advanced usage
+  versionUtils,
+  
+  // Attribution utilities
+  writeFileWithAttribution: attributionUtils.writeFileWithAttribution,
+  addAttributionToCode: attributionUtils.addAttributionToCode,
+  generateAttributionComment: attributionUtils.generateAttributionComment,
+  detectLanguage: attributionUtils.detectLanguage,
+  getAttributionConfig: attributionUtils.getAttributionConfig,
+  setAttributionConfig: attributionUtils.setAttributionConfig,
+  
+  // Export the attribution module itself for advanced usage
+  attributionUtils
 };

@@ -1,14 +1,25 @@
 {
   "name": "ai-tools",
-  "version": "3.0.0",
+  "version": "25.091.C.1001",
   "description": "Comprehensive utility tools for AI assistants with error reduction and cost efficiency features",
   "main": "src/index.js",
+  "versionDetails": {
+    "year": 2025,
+    "dayOfYear": 91,
+    "date": "2025-04-01",
+    "major": "C",
+    "feature": {
+      "category": "Attribution and API Integration",
+      "build": 1
+    }
+  },
   "scripts": {
     "test": "jest",
     "start": "node src/index.js",
     "example": "node examples/basic-usage.js",
     "advanced-example": "node examples/advanced-usage.js",
-    "memoize-demo": "node examples/memoize-demo.js"
+    "memoize-demo": "node examples/memoize-demo.js",
+    "version-demo": "node examples/version-utils-demo.js"
   },
   "keywords": [
     "ai",

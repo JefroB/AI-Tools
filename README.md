@@ -1,4 +1,8 @@
-# AI Tools
+# AI-Tools Toolkit
+
+**Prime8 Engineering Research Project**
+
+This toolkit is a research project of Prime8 Engineering, exploring the capabilities of AI-assisted software development.
 
 A comprehensive collection of utilities designed for AI assistants and developers, providing enhanced file operations, code manipulation, execution capabilities, project management tools, and cost-efficiency features.
 
@@ -102,6 +106,13 @@ AI Tools provides a set of utilities that simplify common operations with improv
   - Check URL safety
   - Create Content Security Policy headers
 
+- **Attribution Utilities** (New in 3.0)
+  - Generate attribution comments for different languages
+  - Add attribution to generated code
+  - Configure attribution settings
+  - Language detection from file extensions
+  - Special handling for different file types
+
 ## Installation
 
 ```bash
@@ -197,12 +208,12 @@ const throttledFetch = aiTools.throttleApiCalls(
 const data = await throttledFetch('endpoint');
 ```
 
-### External API Integration
+### External API Integration (New in 3.0)
 
-The library provides tools for integrating with external APIs. While the examples below use Jira, the same patterns and techniques can be applied to any external API system.
+The library provides tools for integrating with external APIs. The examples below demonstrate integration with Jira, but the same patterns and techniques can be applied to any external API system (GitHub, Slack, Trello, Asana, etc.).
 
 ```javascript
-// Extract references from text (example using Jira format)
+// Extract references from text (Jira-specific example)
 const text = `
   We need to fix the bug described in PROJ-123 before we can implement
   the feature requested in PROJ-456. This is related to the epic EPIC-789.
@@ -232,6 +243,8 @@ const graph = await aiTools.buildIssueDependencyGraph('PROJ-123', jiraClient, {
   relationshipTypes: ['is blocked by', 'blocks', 'relates to']
 });
 ```
+
+For integrating with other APIs, refer to the [External API Integration Ruleset](./docs/EXTERNAL_API_INTEGRATION.md) which provides a comprehensive framework for extending the AI-Tools toolkit with any external API. The toolkit is designed to grow and expand with usage, making it easier to integrate with a wide variety of external services over time.
 
 ### UI Testing
 
@@ -393,6 +406,41 @@ Key topics covered in the guidelines:
 - Version control integration
 
 For detailed information, see the [RefactoringGuidelines.md](./docs/RefactoringGuidelines.md) documentation.
+
+## Versioning
+
+AI-Tools uses a custom versioning system that provides detailed version information while ensuring version numbers always increase over time. The version format is:
+
+```
+YY.DDD.LETTER.FEATURE
+```
+
+Where:
+- **YY**: Last two digits of the year
+- **DDD**: Day of the year (001-366)
+- **LETTER**: Alphabetic major version (A-Z, then AA-ZZ)
+- **FEATURE**: Feature/build identifier (1000-9999)
+
+For example: `25.092.C.2345` represents a version released in 2025, on the 92nd day of the year, with major version C, and feature build 2345.
+
+For more details, see the [Versioning documentation](./docs/VERSIONING.md).
+
+## Attribution
+
+AI-Tools includes utilities for adding proper attribution to generated code. These utilities ensure that code generated using the toolkit is properly attributed to Prime8 Engineering and Jeffrey Charles Bornhoeft.
+
+```javascript
+// Generate an attribution comment for JavaScript
+const jsComment = aiTools.generateAttributionComment('js');
+
+// Add attribution to code
+const codeWithAttribution = aiTools.addAttributionToCode(code, 'js');
+
+// Write a file with attribution
+await aiTools.writeFileWithAttribution('path/to/file.js', code);
+```
+
+For more details, see the [Attribution documentation](./docs/ATTRIBUTION.md).
 
 ## License
 
