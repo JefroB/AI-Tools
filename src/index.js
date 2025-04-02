@@ -24,6 +24,12 @@ const consoleArt = require('./consoleArt');
 const userPrefsUtils = require('./userPrefsUtils');
 const toolUsageAnalyzer = require('./toolUsageAnalyzer');
 const toolUsageTracker = require('./toolUsageTracker');
+const contextCollector = require('./contextCollector');
+const smartRecovery = require('./smartRecovery');
+const configurationManager = require('./configurationManager');
+const enhancedErrorHandling = require('./enhancedErrorHandling');
+const promptEngineering = require('./promptEngineering');
+const contextLengthManager = require('./contextLengthManager');
 
 // Export all utilities
 module.exports = {
@@ -224,5 +230,66 @@ module.exports = {
   visualizeToolUsage: toolUsageTracker.visualizeToolUsage,
   
   // Export the tool usage tracker module itself for advanced usage
-  toolUsageTracker
+  toolUsageTracker,
+  
+  // Context Collector utilities
+  startSession: contextCollector.startSession,
+  endSession: contextCollector.endSession,
+  addEvent: contextCollector.addEvent,
+  captureStateSnapshot: contextCollector.captureStateSnapshot,
+  captureCodeContext: contextCollector.captureCodeContext,
+  handleError: contextCollector.handleError,
+  
+  // Export the context collector module itself for advanced usage
+  contextCollector,
+  
+  // Smart Recovery utilities
+  retryWithBackoff: smartRecovery.retryWithBackoff,
+  applyAdaptivePrompting: smartRecovery.applyAdaptivePrompting,
+  applyFallbackStrategy: smartRecovery.applyFallbackStrategy,
+  getCircuitBreakerStatus: smartRecovery.getCircuitBreakerStatus,
+  
+  // Export the smart recovery module itself for advanced usage
+  smartRecovery,
+  
+  // Configuration Manager utilities
+  getConfig: configurationManager.get,
+  setConfig: configurationManager.set,
+  removeConfig: configurationManager.remove,
+  getAllConfig: configurationManager.getAll,
+  generateConfigReport: configurationManager.generateConfigReport,
+  
+  // Export the configuration manager module itself for advanced usage
+  configurationManager,
+  
+  // Enhanced Error Handling utilities
+  executeWithRetry: enhancedErrorHandling.executeWithRetry,
+  createApiClientWrapper: enhancedErrorHandling.createApiClientWrapper,
+  getErrorStatistics: enhancedErrorHandling.getErrorStatistics,
+  generateErrorReport: enhancedErrorHandling.generateErrorReport,
+  
+  // Export the enhanced error handling module itself for advanced usage
+  enhancedErrorHandling,
+  
+  // Prompt Engineering utilities
+  createTemplate: promptEngineering.createTemplate,
+  updateTemplate: promptEngineering.updateTemplate,
+  getTemplate: promptEngineering.getTemplate,
+  applyTemplate: promptEngineering.applyTemplate,
+  optimizePrompt: promptEngineering.optimizePrompt,
+  
+  // Export the prompt engineering module itself for advanced usage
+  promptEngineering,
+  
+  // Context Length Manager utilities
+  getTokenLimit: contextLengthManager.getTokenLimit,
+  optimizePromptForTokenLimit: contextLengthManager.optimizePromptForTokenLimit,
+  handleContextLengthExceeded: contextLengthManager.handleContextLengthExceeded,
+  recordSuccess: contextLengthManager.recordSuccess,
+  recordError: contextLengthManager.recordError,
+  splitIntoChunks: contextLengthManager.splitIntoChunks,
+  processInChunks: contextLengthManager.processInChunks,
+  
+  // Export the context length manager module itself for advanced usage
+  contextLengthManager
 };
