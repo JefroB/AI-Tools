@@ -44,6 +44,9 @@ run_demo "examples/version-utils-demo.js" "Version Utilities Demo"
 # Run the attribution utilities demo
 run_demo "examples/attribution-utils-demo.js" "Attribution Utilities Demo"
 
+# Run the console art demo
+run_demo "examples/console-art-demo.js" "Console Art Demo"
+
 echo ""
 echo "====================================="
 echo "All demos completed"
@@ -55,5 +58,6 @@ echo "- advanced-demo-output/ (Advanced Demo)"
 echo "- analysis-output/ (Codebase Analysis)"
 echo "- No output files for Version Utilities Demo (console output only)"
 echo "- test-attribution-output/ (Attribution Utilities Demo)"
+echo "- No output files for Console Art Demo (console output only)"
 echo ""
 echo "See AI-TOOLS-DEMOS.md for more information about each demo."

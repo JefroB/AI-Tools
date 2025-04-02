@@ -144,7 +144,31 @@ node examples/attribution-utils-demo.js
 
 This will create a `test-attribution-output` directory containing example files with attribution comments in different languages. The demo shows how to properly attribute code generated using the AI-Tools toolkit to Prime8 Engineering and Jeffrey Charles Bornhoeft.
 
+### 6. Console Art Demo (`examples/console-art-demo.js`)
+
+This script demonstrates how to use the console art utilities for displaying ASCII art and licensing information in the console:
+
+- Displaying ASCII art with different color themes
+- Adding licensing information to console output
+- Using different display modes (success, error, warning)
+- Customizing the display with additional messages
+
+To run the console art demo:
+
+```bash
+node examples/console-art-demo.js
+```
+
+This demo doesn't create any output files, but displays colorful ASCII art and licensing information in the console. It demonstrates how to add a visual branding element to scripts that analyze, repair, or generate code.
+
 ## Key Features Demonstrated
+
+### Console Art
+
+- Displaying ASCII art in the console
+- Using different color themes for different contexts
+- Adding licensing information to console output
+- Customizing the display with additional messages
 
 ### Attribution
 

@@ -20,6 +20,7 @@ const uiTestUtils = require('./uiTestUtils');
 const securityUtils = require('./securityUtils');
 const versionUtils = require('./versionUtils');
 const attributionUtils = require('./attributionUtils');
+const consoleArt = require('./consoleArt');
 
 // Export all utilities
 module.exports = {
@@ -171,5 +172,14 @@ module.exports = {
   setAttributionConfig: attributionUtils.setAttributionConfig,
   
   // Export the attribution module itself for advanced usage
-  attributionUtils
+  attributionUtils,
+  
+  // Console art utilities
+  displayConsoleArt: consoleArt.displayConsoleArt,
+  displaySuccess: consoleArt.displaySuccess,
+  displayError: consoleArt.displayError,
+  displayWarning: consoleArt.displayWarning,
+  
+  // Export the console art module itself for advanced usage
+  consoleArt
 };
