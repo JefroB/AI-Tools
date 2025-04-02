@@ -19,6 +19,27 @@ Key improvements in Version D:
 
 For detailed information about the Version D release, see [MAJOR_VERSION_D.md](./docs/MAJOR_VERSION_D.md).
 
+## Architecture Visualizations
+
+Explore the AI-Tools architecture through our comprehensive visualizations:
+
+<table>
+  <tr>
+    <td align="center"><a href="./docs/architecture/module-dependencies.md"><img src="https://img.shields.io/badge/Diagram-Module%20Dependencies-1E3A8A" width="200"/><br />Module Dependencies</a></td>
+    <td align="center"><a href="./docs/architecture/feature-timeline.md"><img src="https://img.shields.io/badge/Diagram-Feature%20Timeline-0D9488" width="200"/><br />Feature Timeline</a></td>
+    <td align="center"><a href="./docs/architecture/data-flow.md"><img src="https://img.shields.io/badge/Diagram-Data%20Flow-8B5CF6" width="200"/><br />Data Flow</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="./docs/architecture/module-categories.md"><img src="https://img.shields.io/badge/Diagram-Module%20Categories-F97316" width="200"/><br />Module Categories</a></td>
+    <td align="center"><a href="./docs/architecture/optimization-pipeline.md"><img src="https://img.shields.io/badge/Diagram-Optimization%20Pipeline-EF4444" width="200"/><br />Optimization Pipeline</a></td>
+    <td align="center"><a href="./docs/architecture/component-interactions.md"><img src="https://img.shields.io/badge/Diagram-Component%20Interactions-10B981" width="200"/><br />Component Interactions</a></td>
+  </tr>
+</table>
+
+For an interactive experience, check out our [Architecture Dashboard](./docs/architecture/dashboard.html).
+
+These visualizations are automatically updated with each code change, ensuring they always reflect the current state of the system. [Learn more about our architecture visualizations](./docs/ARCHITECTURE_VISUALIZATIONS.md).
+
 ## Overview
 
 AI Tools provides a set of utilities that simplify common operations with improved error handling and enhanced options. These tools are particularly useful for AI assistants that need to interact with the file system, manipulate code, execute commands, and manage projects in a robust and user-friendly way. Version 3.0 adds significant features for API optimization, security scanning, UI testing, and external API integration.
