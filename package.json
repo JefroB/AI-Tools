@@ -19,7 +19,13 @@
     "example": "node examples/basic-usage.js",
     "advanced-example": "node examples/advanced-usage.js",
     "memoize-demo": "node examples/memoize-demo.js",
-    "version-demo": "node examples/version-utils-demo.js"
+    "version-demo": "node examples/version-utils-demo.js",
+    "validate-version": "node scripts/validate-version.js",
+    "bump-version": "node scripts/bump-version.js",
+    "bump-version:major": "node scripts/bump-version.js --major",
+    "bump-version:docs": "node scripts/bump-version.js --category=5",
+    "bump-version:fix": "node scripts/bump-version.js --category=7",
+    "preversion": "npm run validate-version"
   },
   "keywords": [
     "ai",
@@ -45,7 +51,13 @@
   "devDependencies": {
     "jest": "^29.5.0",
     "prettier": "^2.8.8",
-    "eslint": "^8.38.0"
+    "eslint": "^8.38.0",
+    "husky": "^8.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run validate-version"
+    }
   },
   "optionalDependencies": {
     "prettier": "^2.8.8",

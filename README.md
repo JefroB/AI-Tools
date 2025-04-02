@@ -409,7 +409,7 @@ For detailed information, see the [RefactoringGuidelines.md](./docs/RefactoringG
 
 ## Versioning
 
-AI-Tools uses a custom versioning system that provides detailed version information while ensuring version numbers always increase over time. The version format is:
+AI-Tools uses a **mandatory** custom versioning system that provides detailed version information while ensuring version numbers always increase over time. The version format is:
 
 ```
 YY.DDD.LETTER.FEATURE
@@ -423,7 +423,20 @@ Where:
 
 For example: `25.092.C.2345` represents a version released in 2025, on the 92nd day of the year, with major version C, and feature build 2345.
 
-For more details, see the [Versioning documentation](./docs/VERSIONING.md).
+This versioning system is mandatory for all AI-Tools releases. The project includes utilities to help maintain this versioning system:
+
+```bash
+# Validate the current version
+npm run validate-version
+
+# Bump the version (increments build number)
+npm run bump-version
+
+# Bump major version (e.g., C -> D)
+npm run bump-version:major
+```
+
+For more details, see the [Versioning documentation](./docs/VERSIONING.md) and [Contributing guidelines](./docs/CONTRIBUTING.md).
 
 ## Attribution
 
