@@ -113,6 +113,13 @@ AI Tools provides a set of utilities that simplify common operations with improv
   - Language detection from file extensions
   - Special handling for different file types
 
+- **User Preferences** (New in 3.0)
+  - Store user-specific settings between sessions
+  - Remember user's preferred name
+  - Maintain consistent settings across multiple runs
+  - Store preferences locally with privacy in mind
+  - Easily customize the user experience
+
 ## Installation
 
 ```bash
@@ -454,6 +461,33 @@ await aiTools.writeFileWithAttribution('path/to/file.js', code);
 ```
 
 For more details, see the [Attribution documentation](./docs/ATTRIBUTION.md).
+
+### User Preferences
+
+```javascript
+// Get the user's name
+const userName = aiTools.getUserName();
+// Returns the user's preferred name or "User" if not set
+
+// Set the user's name
+aiTools.setUserName("Jeffrey Charles Bornhoeft");
+
+// Get a specific preference with a default value
+const theme = aiTools.getUserPreference('theme', 'light');
+
+// Set a specific preference
+aiTools.setUserPreference('theme', 'dark');
+
+// Reset all preferences to defaults
+aiTools.resetUserPreferences();
+
+// Prompt for user name if not already set
+const name = aiTools.promptForUserName("Default Name");
+```
+
+The user preferences are stored in a local JSON file (`.user-prefs/preferences.json`) that is automatically added to `.gitignore` to ensure that personal preferences are not committed to version control.
+
+For more details, see the [User Preferences documentation](./docs/USER_PREFERENCES.md).
 
 ## License
 

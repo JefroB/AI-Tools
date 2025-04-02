@@ -35,3 +35,6 @@ Thumbs.db
 test-output/
 test-advanced-output/
 coverage/
+
+# User preferences
+.user-prefs/

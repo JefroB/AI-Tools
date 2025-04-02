@@ -233,7 +233,15 @@ The toolkit includes example implementations for reference:
 1. **Jira API**: See `examples/jira-utils-demo.js` (Note: The code examples in the README.md are specific to Jira)
 2. **Generic API**: See `examples/api-utils-demo.js`
 
-> **Important Note**: While the examples in the README.md showcase Jira integration, the AI-Tools toolkit is designed to work with any external API. The same patterns and techniques demonstrated with Jira can be applied to integrate with other APIs such as GitHub, Slack, Trello, Asana, or any other service with an API. Users are encouraged to create their own API integrations by following the guidelines in this document and using the existing examples as templates.
+> **Important Note**: While the examples in the README.md showcase Jira integration, the AI-Tools toolkit is designed to work with any external API. The same patterns and techniques demonstrated with Jira can be applied to integrate with other APIs such as GitHub, Slack, Trello, Asana, or any other service with an API.
+>
+> **Users are strongly encouraged to create their own API integrations** by following the guidelines in this document and using the existing examples as templates. The toolkit is designed to be extensible, allowing you to create custom rules and tools for any API you need to work with. This approach enables the AI-Tools toolkit to grow and evolve with your specific requirements over time.
+>
+> By creating your own API integration modules, you can:
+> - Connect to services specific to your workflow
+> - Customize the behavior to match your exact needs
+> - Extend the toolkit's capabilities in ways that make sense for your projects
+> - Contribute back to the community with new integration patterns
 
 When implementing a new API integration, use these examples as templates and adapt them to the specific requirements of the target API. The AI-Tools toolkit is designed to grow and expand with usage, making it easier to integrate with a wide variety of external services over time.
 

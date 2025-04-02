@@ -21,6 +21,7 @@ const securityUtils = require('./securityUtils');
 const versionUtils = require('./versionUtils');
 const attributionUtils = require('./attributionUtils');
 const consoleArt = require('./consoleArt');
+const userPrefsUtils = require('./userPrefsUtils');
 
 // Export all utilities
 module.exports = {
@@ -181,5 +182,16 @@ module.exports = {
   displayWarning: consoleArt.displayWarning,
   
   // Export the console art module itself for advanced usage
-  consoleArt
+  consoleArt,
+  
+  // User preferences utilities
+  getUserName: userPrefsUtils.getUserName,
+  setUserName: userPrefsUtils.setUserName,
+  getUserPreference: userPrefsUtils.getUserPreference,
+  setUserPreference: userPrefsUtils.setUserPreference,
+  resetUserPreferences: userPrefsUtils.resetUserPreferences,
+  promptForUserName: userPrefsUtils.promptForUserName,
+  
+  // Export the user preferences module itself for advanced usage
+  userPrefsUtils
 };
