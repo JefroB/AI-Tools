@@ -53,12 +53,9 @@ jobs:
               console.error(`Error importing codeReviewer: ${error.message}`);
               console.log('Creating a simple comment instead of full review');
               
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: "## Code Review\n\nUnable to run full code review due to module loading issues. Please check the GitHub Actions logs for details."
-              });
+              console.log('Skipping comment creation due to potential permission issues');
+              // We'll just log the error and continue without failing the workflow
+              // This avoids the 403 error when the token doesn't have the right permissions
               
               return;
             }
