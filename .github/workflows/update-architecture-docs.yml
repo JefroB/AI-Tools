@@ -39,7 +39,7 @@ jobs:
     - name: Check for changes
       id: git-check
       run: |
-        git diff --exit-code docs/architecture || echo "::set-output name=changes::true"
+        git diff --exit-code docs/architecture || echo "changes=true" >> $GITHUB_OUTPUT
     
     - name: Commit changes
       if: steps.git-check.outputs.changes == 'true'
@@ -56,16 +56,13 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ github.ref }}
     
-    - name: Create PR for documentation update
+    # For pull requests, we'll commit the changes directly to the PR branch
+    # instead of creating a new PR to avoid circular references
+    - name: Commit changes to PR branch
       if: steps.git-check.outputs.changes == 'true' && github.event_name == 'pull_request'
-      uses: peter-evans/create-pull-request@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "docs: update architecture documentation"
-        title: "docs: update architecture documentation"
-        body: |
-          This PR updates the architecture documentation to reflect changes in the codebase.
-          
-          The diagrams have been automatically generated based on the current state of the codebase.
-        branch: docs/update-architecture-${{ github.event.pull_request.number }}
-        base: ${{ github.head_ref }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/architecture
+        git commit -m "docs: update architecture documentation [skip ci]"
+        git push origin HEAD:${{ github.head_ref }}
