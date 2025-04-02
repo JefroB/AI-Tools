@@ -5,6 +5,16 @@ All notable changes to the AI-Tools project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to the custom versioning system described in [VERSIONING.md](./docs/VERSIONING.md).
 
+## [25.091.C.1002] - 2025-04-01
+
+### Added
+- **Contextual Usage Tracking System**
+  - Enhanced Tool Usage Tracker with script execution context tracking
+  - Context Collector for detailed error context capture
+  - Smart Recovery with retry, fallback, and circuit breaker patterns
+  - Adaptive prompting based on failure patterns
+  - Comprehensive documentation in CONTEXTUAL-USAGE-TRACKING.md
+
 ## [25.091.C.1001] - 2025-04-01
 
 ### Added

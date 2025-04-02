@@ -1,8 +1,16 @@
 /**
- * Tool Usage Tracker Module for AI Tools
+ * Enhanced Tool Usage Tracker Module for AI Tools
  * 
  * This module provides functionality to track usage of AI-Tools functions,
- * estimate token savings, and analyze efficiency.
+ * estimate token savings, analyze efficiency, and capture contextual information
+ * for debugging and optimization purposes.
+ * 
+ * Enhanced features:
+ * - Script execution context tracking
+ * - Contextual relationships between tool calls
+ * - Session tracking for related operations
+ * - Detailed error context capture
+ * - Integration with contextCollector for deeper analysis
  */
 
 const fs = require('fs-extra');

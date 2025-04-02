@@ -1,6 +1,6 @@
 {
   "name": "ai-tools",
-  "version": "25.091.C.1001",
+  "version": "25.091.C.1002",
   "description": "Comprehensive utility tools for AI assistants with error reduction and cost efficiency features",
   "main": "src/index.js",
   "versionDetails": {
@@ -9,8 +9,8 @@
     "date": "2025-04-01",
     "major": "C",
     "feature": {
-      "category": "Attribution and API Integration",
-      "build": 1
+      "category": "Core functionality",
+      "build": 2
     }
   },
   "scripts": {
@@ -43,13 +43,16 @@
   "license": "MIT",
   "dependencies": {
     "ajv": "^8.17.1",
+    "axios": "latest",
+    "chalk": "^4.1.2",
+    "chart.js": "^3.9.1",
     "diff": "^5.2.0",
+    "fast-safe-stringify": "^2.1.1",
     "fs-extra": "^11.1.1",
     "node-persist": "^4.0.4",
-    "axios": "latest",
-    "uuid": "^9.0.1",
-    "fast-safe-stringify": "^2.1.1",
-    "perf_hooks": "^0.0.1"
+    "node-schedule": "^1.3.3",
+    "perf_hooks": "^0.0.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "jest": "^29.5.0",
