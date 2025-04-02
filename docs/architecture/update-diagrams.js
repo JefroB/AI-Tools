@@ -49,10 +49,22 @@ const config = {
 };
 
 /**
+ * Check if running in CI environment
+ */
+function isCI() {
+  return process.env.CI === 'true' || process.env.NODE_ENV === 'production';
+}
+
+/**
  * Main function to generate all diagrams
  */
 async function generateDiagrams() {
   try {
+    // Disable colors in CI environment
+    if (isCI()) {
+      chalk.level = 0;
+    }
+    
     console.log(chalk.blue.bold('\n=== Architecture Diagram Generator ===\n'));
     
     // Ensure output directory exists
@@ -75,15 +87,27 @@ async function generateDiagrams() {
     console.log(chalk.green('\nAll diagrams generated successfully!'));
     console.log(chalk.blue(`Diagrams are available in: ${config.outputDir}`));
     
-    // Record metrics
-    metricsUtils.recordMetric('architecture-diagrams-generated', {
-      timestamp: new Date().toISOString(),
-      moduleCount: Object.keys(modules).length
-    });
+    // Record metrics (only if not in CI environment to avoid prompts)
+    if (!isCI()) {
+      try {
+        metricsUtils.recordMetric('architecture-diagrams-generated', {
+          timestamp: new Date().toISOString(),
+          moduleCount: Object.keys(modules).length
+        });
+      } catch (metricError) {
+        // Silently ignore metric recording errors
+        console.log('Skipping metrics recording');
+      }
+    }
     
   } catch (error) {
     logger.error('Error generating diagrams', error);
     console.error(chalk.red('Error generating diagrams:'), error.message);
+    
+    // Exit with error code in CI environment
+    if (isCI()) {
+      process.exit(1);
+    }
   }
 }
 
@@ -155,7 +179,7 @@ async function generateModuleDependenciesDiagram(modules) {
   // For this example, we'll just ensure the file exists and let updateTimestamps handle it
   if (!fileExists) {
     // Create a basic diagram file
-    const content = `# Module Dependencies\n\n`;
+    let content = `# Module Dependencies\n\n`;
     content += `This visualization shows the dependencies between different modules in the AI-Tools system.\n\n`;
     content += `\`\`\`mermaid\ngraph TD\n    A[Module A] --> B[Module B]\n    B --> C[Module C]\n\`\`\`\n\n`;
     content += `## Last Updated\n\nThis visualization was last updated on ${new Date().toLocaleDateString('en-US', {
@@ -185,7 +209,7 @@ async function generateFeatureTimelineDiagram() {
   // For this example, we'll just ensure the file exists and let updateTimestamps handle it
   if (!fileExists) {
     // Create a basic diagram file
-    const content = `# Feature Timeline\n\n`;
+    let content = `# Feature Timeline\n\n`;
     content += `This visualization shows the timeline of features added to the AI-Tools system.\n\n`;
     content += `\`\`\`mermaid\ngantt\n    title Feature Timeline\n    dateFormat  YYYY-MM-DD\n    section Features\n    Feature A :a1, 2025-01-01, 30d\n    Feature B :after a1, 20d\n\`\`\`\n\n`;
     content += `## Last Updated\n\nThis visualization was last updated on ${new Date().toLocaleDateString('en-US', {
@@ -215,7 +239,7 @@ async function generateDataFlowDiagram() {
   // For this example, we'll just ensure the file exists and let updateTimestamps handle it
   if (!fileExists) {
     // Create a basic diagram file
-    const content = `# Data Flow\n\n`;
+    let content = `# Data Flow\n\n`;
     content += `This visualization shows the data flow through the AI-Tools system.\n\n`;
     content += `\`\`\`mermaid\ngraph LR\n    A[Input] --> B[Process]\n    B --> C[Output]\n\`\`\`\n\n`;
     content += `## Last Updated\n\nThis visualization was last updated on ${new Date().toLocaleDateString('en-US', {
@@ -245,7 +269,7 @@ async function generateModuleCategoriesDiagram(modules) {
   // For this example, we'll just ensure the file exists and let updateTimestamps handle it
   if (!fileExists) {
     // Create a basic diagram file
-    const content = `# Module Categories\n\n`;
+    let content = `# Module Categories\n\n`;
     content += `This visualization shows the categories of modules in the AI-Tools system.\n\n`;
     content += `\`\`\`mermaid\npie title Module Categories\n    "Core" : 30\n    "Performance" : 20\n    "API" : 10\n    "UI" : 10\n    "Security" : 10\n    "Utility" : 20\n\`\`\`\n\n`;
     content += `## Last Updated\n\nThis visualization was last updated on ${new Date().toLocaleDateString('en-US', {
@@ -275,7 +299,7 @@ async function generateOptimizationPipelineDiagram() {
   // For this example, we'll just ensure the file exists and let updateTimestamps handle it
   if (!fileExists) {
     // Create a basic diagram file
-    const content = `# Optimization Pipeline\n\n`;
+    let content = `# Optimization Pipeline\n\n`;
     content += `This visualization shows the optimization pipeline of the AI-Tools system.\n\n`;
     content += `\`\`\`mermaid\ngraph LR\n    A[Input] --> B[Preprocess]\n    B --> C[Optimize]\n    C --> D[Output]\n\`\`\`\n\n`;
     content += `## Last Updated\n\nThis visualization was last updated on ${new Date().toLocaleDateString('en-US', {
@@ -305,7 +329,7 @@ async function generateComponentInteractionsDiagram() {
   // For this example, we'll just ensure the file exists and let updateTimestamps handle it
   if (!fileExists) {
     // Create a basic diagram file
-    const content = `# Component Interactions\n\n`;
+    let content = `# Component Interactions\n\n`;
     content += `This visualization shows the interactions between components in the AI-Tools system.\n\n`;
     content += `\`\`\`mermaid\nsequenceDiagram\n    participant A as Component A\n    participant B as Component B\n    A->>B: Request\n    B-->>A: Response\n\`\`\`\n\n`;
     content += `## Last Updated\n\nThis visualization was last updated on ${new Date().toLocaleDateString('en-US', {
