@@ -22,6 +22,8 @@ const versionUtils = require('./versionUtils');
 const attributionUtils = require('./attributionUtils');
 const consoleArt = require('./consoleArt');
 const userPrefsUtils = require('./userPrefsUtils');
+const toolUsageAnalyzer = require('./toolUsageAnalyzer');
+const toolUsageTracker = require('./toolUsageTracker');
 
 // Export all utilities
 module.exports = {
@@ -96,6 +98,14 @@ module.exports = {
   resetMetrics: metricsUtils.resetMetrics,
   exportMetrics: metricsUtils.exportMetrics,
   visualizeMetrics: metricsUtils.visualizeMetrics,
+  
+  // Token efficiency metrics
+  recordTokenEfficiency: metricsUtils.recordTokenEfficiency,
+  recordTokenWastage: metricsUtils.recordTokenWastage,
+  recordOptimizationImpact: metricsUtils.recordOptimizationImpact,
+  generateTokenEfficiencyReport: metricsUtils.generateTokenEfficiencyReport,
+  takeTokenEfficiencySnapshot: metricsUtils.takeTokenEfficiencySnapshot,
+  calculateTrifectaScore: metricsUtils.calculateTrifectaScore,
   
   // Memoization utilities
   memoize: memoizeUtils.memoize,
@@ -193,5 +203,26 @@ module.exports = {
   promptForUserName: userPrefsUtils.promptForUserName,
   
   // Export the user preferences module itself for advanced usage
-  userPrefsUtils
+  userPrefsUtils,
+  
+  // Tool Usage Analyzer utilities
+  analyzeFile: toolUsageAnalyzer.analyzeFile,
+  analyzeDirectory: toolUsageAnalyzer.analyzeDirectory,
+  generateToolUsageReport: toolUsageAnalyzer.generateReport,
+  analyzeAndGenerateReport: toolUsageAnalyzer.analyzeAndGenerateReport,
+  identifyPotentialExtensions: toolUsageAnalyzer.identifyPotentialExtensions,
+  
+  // Export the tool usage analyzer module itself for advanced usage
+  toolUsageAnalyzer,
+  
+  // Tool Usage Tracker utilities
+  createToolProxy: toolUsageTracker.createToolProxy,
+  getToolUsageMetrics: toolUsageTracker.getToolUsageMetrics,
+  resetToolUsageMetrics: toolUsageTracker.resetToolUsageMetrics,
+  crossReferenceWithClaudeUsage: toolUsageTracker.crossReferenceWithClaudeUsage,
+  generateAnalysisReport: toolUsageTracker.generateAnalysisReport,
+  visualizeToolUsage: toolUsageTracker.visualizeToolUsage,
+  
+  // Export the tool usage tracker module itself for advanced usage
+  toolUsageTracker
 };

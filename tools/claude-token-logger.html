@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Token Logger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .card {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .summary-card {
+            background-color: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Claude Token Logger</h1>
+    
+    <div class="tabs">
+        <div class="tab active" data-tab="log">Log Tokens</div>
+        <div class="tab" data-tab="view">View Reports</div>
+    </div>
+    
+    <div id="log-tab" class="tab-content active">
+        <div class="card">
+            <h2>Log Token Usage</h2>
+            <p>Record token usage from your Claude/Cline development sessions.</p>
+            
+            <form id="token-form">
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-type">Task Type:</label>
+                    <select id="task-type" name="task-type" required>
+                        <option value="">-- Select Task Type --</option>
+                        <option value="planning">Planning</option>
+                        <option value="coding">Coding</option>
+                        <option value="debugging">Debugging</option>
+                        <option value="refactoring">Refactoring</option>
+                        <option value="documentation">Documentation</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Task Description:</label>
+                    <textarea id="description" name="description" placeholder="Brief description of the task..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="files">Files Modified (comma-separated):</label>
+                    <input type="text" id="files" name="files" placeholder="e.g., src/index.js, README.md">
+                </div>
+                
+                <div class="form-group">
+                    <label for="prompt-tokens">Prompt Tokens:</label>
+                    <input type="number" id="prompt-tokens" name="prompt-tokens" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="completion-tokens">Completion Tokens:</label>
+                    <input type="number" id="completion-tokens" name="completion-tokens" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="interactions">Number of Interactions:</label>
+                    <input type="number" id="interactions" name="interactions" min="1" value="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes" placeholder="Any additional notes..."></textarea>
+                </div>
+                
+                <button type="submit">Save Token Usage</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="view-tab" class="tab-content">
+        <div class="card">
+            <h2>Token Usage Summary</h2>
+            
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div>Total Prompt Tokens</div>
+                    <div class="summary-value" id="total-prompt-tokens">0</div>
+                </div>
+                
+                <div class="summary-card">
+                    <div>Total Completion Tokens</div>
+                    <div class="summary-value" id="total-completion-tokens">0</div>
+                </div>
+                
+                <div class="summary-card">
+                    <div>Total Tokens</div>
+                    <div class="summary-value" id="total-tokens">0</div>
+                </div>
+                
+                <div class="summary-card">
+                    <div>Estimated Cost ($0.03/1K input, $0.15/1K output)</div>
+                    <div class="summary-value" id="estimated-cost">$0.00</div>
+                </div>
+            </div>
+            
+            <h3>Token Usage by Task Type</h3>
+            <div class="chart-container">
+                <canvas id="task-type-chart"></canvas>
+            </div>
+            
+            <h3>Token Usage Over Time</h3>
+            <div class="chart-container">
+                <canvas id="time-chart"></canvas>
+            </div>
+            
+            <h3>Recent Logs</h3>
+            <table id="logs-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Task Type</th>
+                        <th>Description</th>
+                        <th>Prompt Tokens</th>
+                        <th>Completion Tokens</th>
+                        <th>Total Tokens</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be added dynamically -->
+                </tbody>
+            </table>
+            
+            <button id="export-data">Export Data</button>
+            <button id="clear-data">Clear All Data</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="claude-token-logger.js"></script>
+</body>
+</html>

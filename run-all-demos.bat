@@ -44,6 +44,9 @@ call :run_demo "examples/attribution-utils-demo.js" "Attribution Utilities Demo"
 REM Run the console art demo
 call :run_demo "examples/console-art-demo.js" "Console Art Demo"
 
+REM Run the tool usage tracker demo
+call :run_demo "examples/tool-usage-tracker-demo.js" "Tool Usage Tracker Demo"
+
 echo.
 echo =====================================
 echo All demos completed
@@ -56,5 +59,6 @@ echo - analysis-output/ (Codebase Analysis)
 echo - No output files for Version Utilities Demo (console output only)
 echo - test-attribution-output/ (Attribution Utilities Demo)
 echo - No output files for Console Art Demo (console output only)
+echo - test-demo-output/tool-usage/ (Tool Usage Tracker Demo)
 echo.
 echo See AI-TOOLS-DEMOS.md for more information about each demo.

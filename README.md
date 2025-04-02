@@ -72,6 +72,8 @@ AI Tools provides a set of utilities that simplify common operations with improv
   - Cache performance tracking
   - Token and cost savings measurement
   - Visualization and reporting
+  - Token efficiency metrics and wastage detection
+  - Trifecta scoring (Good, Cheap, Fast)
 
 - **Memoization**
   - Function result caching for expensive operations
@@ -119,6 +121,21 @@ AI Tools provides a set of utilities that simplify common operations with improv
   - Maintain consistent settings across multiple runs
   - Store preferences locally with privacy in mind
   - Easily customize the user experience
+
+- **Tool Usage Analyzer** (New in 3.0)
+  - Analyze code for AI-Tools usage opportunities
+  - Identify patterns where AI-Tools utilities could be used
+  - Generate reports of potential improvements
+  - Track tool usage metrics
+  - Identify potential extensions to the toolkit
+
+- **Tool Usage Tracking** (New in 25.091.C.1001)
+  - Track function calls via proxy wrappers
+  - Estimate token savings for each tool use
+  - Cross-reference with Claude token usage
+  - Generate comprehensive analysis reports
+  - Visualize tool usage patterns
+  - Identify performance bottlenecks and error-prone tools
 
 ## Installation
 
@@ -488,6 +505,168 @@ const name = aiTools.promptForUserName("Default Name");
 The user preferences are stored in a local JSON file (`.user-prefs/preferences.json`) that is automatically added to `.gitignore` to ensure that personal preferences are not committed to version control.
 
 For more details, see the [User Preferences documentation](./docs/USER_PREFERENCES.md).
+
+## Token Efficiency Metrics
+
+The Token Efficiency Metrics system helps track and optimize token usage in your applications, making AI development more cost-effective.
+
+```javascript
+// Record token efficiency for an operation
+const result = aiTools.recordTokenEfficiency(
+  'summarizeText',  // Operation name
+  500,              // Tokens used
+  8,                // Value score (1-10)
+  { text: 'A long document', maxLength: 100 }  // Metadata
+);
+
+// Detect and record token wastage
+aiTools.recordTokenWastage(
+  'oversizedPrompts',  // Wastage type
+  1800,                // Tokens wasted
+  { description: 'Including unnecessary context' }  // Metadata
+);
+
+// Record the impact of a token optimization
+const impact = aiTools.recordOptimizationImpact(
+  'promptReduction',  // Optimization type
+  2000,               // Tokens before optimization
+  1200,               // Tokens after optimization
+  { description: 'Removed unnecessary instructions' }  // Metadata
+);
+
+// Generate a token efficiency report
+const report = aiTools.generateTokenEfficiencyReport();
+// Report includes: most/least efficient operations, wastage patterns,
+// optimization impacts, and recommendations for improvement
+
+// Calculate the trifecta score (Good, Cheap, Fast)
+const score = aiTools.calculateTrifectaScore();
+// Returns scores for quality, cost efficiency, and speed
+```
+
+The token efficiency metrics system helps you:
+- Track the value delivered per token spent
+- Identify patterns that waste tokens
+- Measure the impact of optimization techniques
+- Generate recommendations for improving token efficiency
+- Balance quality, cost, and speed with the trifecta score
+
+For a complete example, see [token-efficiency-demo.js](./examples/token-efficiency-demo.js).
+
+### Claude Token Logger
+
+The AI-Tools toolkit includes a simple utility for tracking token usage during your development sessions with Claude/Cline:
+
+```
+tools/claude-token-logger.html
+```
+
+This browser-based tool allows you to:
+- Log token usage from each Claude/Cline interaction
+- Categorize sessions by task type
+- Track files modified during each session
+- Visualize token usage over time and by task type
+- Calculate estimated costs based on current Claude pricing
+
+To use the token logger:
+1. Open `tools/claude-token-logger.html` in any modern browser
+2. After each significant Claude interaction, note the token counts
+3. Log them with relevant context
+4. Use the Reports tab to analyze your token usage patterns
+
+All data is stored locally in your browser's localStorage - no server required.
+
+For more details, see the [Claude Token Logger documentation](./tools/README.md).
+
+## Tool Usage Analyzer
+
+The Tool Usage Analyzer helps ensure consistent usage of the AI-Tools toolkit and identifies opportunities for extending it.
+
+```javascript
+// Analyze a file for AI-Tools usage opportunities
+const suggestions = await aiTools.analyzeFile('path/to/file.js');
+
+// Analyze a directory recursively
+const results = await aiTools.analyzeDirectory('path/to/directory', {
+  recursive: true,
+  filePattern: '.js'
+});
+
+// Generate a report of AI-Tools usage opportunities
+const report = aiTools.generateToolUsageReport(results);
+
+// Analyze and generate a report in one step
+const reportPath = await aiTools.analyzeAndGenerateReport('path/to/directory', {
+  recursive: true,
+  filePattern: '.js',
+  outputPath: 'ai-tools-usage-report.md'
+});
+
+// Identify potential extensions to the toolkit
+const extensions = aiTools.identifyPotentialExtensions(results);
+```
+
+The analyzer looks for patterns such as:
+- File operations that could use fileUtils
+- API calls that could use apiUtils
+- Error handling that could be improved
+- Caching opportunities
+- Validation opportunities
+
+For more details, see the [AI-Tools Usage Ruleset](./docs/AI_TOOLS_USAGE_RULESET.md) which provides comprehensive guidelines for using and extending the toolkit.
+
+## Tool Usage Tracking
+
+The Tool Usage Tracker helps you monitor how your application uses the AI-Tools library, estimate token savings, and analyze efficiency.
+
+```javascript
+// Create proxied versions of functions to track
+const fileUtils = {
+  readFile: aiTools.createToolProxy(readFile, 'fileUtils'),
+  writeFile: aiTools.createToolProxy(writeFile, 'fileUtils')
+};
+
+// Use the tracked functions
+const content = await fileUtils.readFile('path/to/file.txt');
+await fileUtils.writeFile('path/to/output.txt', 'Hello, world!');
+
+// Get metrics about tool usage
+const metrics = aiTools.getToolUsageMetrics();
+console.log(`Total calls: ${metrics.metrics.totalCalls}`);
+console.log(`Estimated token savings: ${metrics.metrics.totalEstimatedTokenSavings}`);
+
+// Cross-reference with Claude token usage
+const crossReference = await aiTools.crossReferenceWithClaudeUsage();
+console.log(`Efficiency ratio: ${crossReference.summary.efficiencyRatio * 100}%`);
+console.log(`Estimated cost saved: $${crossReference.summary.costSaved}`);
+
+// Generate a comprehensive analysis report
+const report = await aiTools.generateAnalysisReport();
+
+// Visualize tool usage
+const visualization = aiTools.visualizeToolUsage(metrics);
+console.log(visualization);
+```
+
+The Tool Usage Tracker helps you:
+- Monitor which tools are used most frequently
+- Estimate how many tokens are saved by using local tools instead of API calls
+- Identify performance bottlenecks and error-prone tools
+- Generate recommendations for improving efficiency
+
+For more details, see the [Tool Usage Tracking documentation](./docs/TOOL_USAGE_TRACKING.md).
+
+## Development Environment
+
+For information on setting up the recommended development environment for working with the AI-Tools library and Claude/Cline, see the [Development Environment documentation](./docs/DEVELOPMENT_ENVIRONMENT.md). This guide covers:
+
+- VSCode setup and recommended extensions
+- Node.js environment requirements
+- Claude/Cline configuration
+- Project structure recommendations
+- Development workflow best practices
+- Token tracking integration
+- Debugging and troubleshooting
 
 ## License
 

@@ -243,6 +243,44 @@ The toolkit includes example implementations for reference:
 > - Extend the toolkit's capabilities in ways that make sense for your projects
 > - Contribute back to the community with new integration patterns
 
+### Important Clarification on Code Examples
+
+**The code examples in the README.md under "External API Integration" section are specifically for Jira integration.** These examples are provided as a reference implementation to demonstrate the integration patterns, but are not meant to be the only API integration supported.
+
+If you want to integrate with a different API (GitHub, Slack, Trello, etc.), you should:
+
+1. Create your own custom rules and tools in the AI-Tools toolkit following the patterns demonstrated
+2. Implement the specific authentication, endpoints, and data transformations required by your target API
+3. Use the toolkit's core utilities for optimization (caching, retries, throttling)
+4. Document your integration following the guidelines in this document
+
+**The AI-Tools toolkit is designed to grow and expand with your usage.** Each new API integration you create becomes part of your toolkit, ready to be reused in future projects, making AI development more efficient and cost-effective over time.
+
+### Jira Example vs. Custom API Integrations
+
+**Important: The code examples in the README.md are specifically for Jira integration.** These examples are provided as a reference implementation, but the toolkit is designed to work with any external API.
+
+If you want to integrate with a different API (such as GitHub, Slack, Trello, etc.), you should:
+
+1. Create your own custom rules and tools in the AI-Tools toolkit following the patterns demonstrated
+2. Implement the specific authentication, endpoints, and data transformations required by your target API
+3. Use the toolkit's core utilities for optimization (caching, retries, throttling)
+4. Document your integration following the guidelines in this document
+
+**The AI-Tools toolkit is designed to grow and expand with your usage, making AI development more efficient and cost-effective over time.** Each new API integration you create becomes part of your toolkit, ready to be reused in future projects.
+
+### Cost-Effectiveness Through Toolkit Expansion
+
+A key benefit of the AI-Tools approach is that it becomes more cost-effective as you expand the toolkit:
+
+1. **Reusable Components**: Each API integration you create can be reused across multiple projects
+2. **Reduced Development Time**: New integrations build on existing patterns and utilities
+3. **Consistent Implementation**: Following the toolkit patterns ensures consistent, high-quality integrations
+4. **Knowledge Accumulation**: The toolkit becomes a repository of your integration knowledge
+5. **Reduced AI Costs**: Well-structured integrations reduce the tokens needed for AI to understand and use them
+
+By investing in creating proper API integrations within the toolkit, you create a growing ecosystem of tools that make future AI development faster, more reliable, and less expensive. Rather than creating one-off solutions for each API interaction, the toolkit approach encourages building a comprehensive set of tools that improve with each use.
+
 When implementing a new API integration, use these examples as templates and adapt them to the specific requirements of the target API. The AI-Tools toolkit is designed to grow and expand with usage, making it easier to integrate with a wide variety of external services over time.
 
 ### Creating a New API Integration

@@ -1,0 +1,50 @@
+{
+  "api": {
+    "calls": 0,
+    "tokens": {
+      "prompt": 0,
+      "completion": 0,
+      "total": 0
+    },
+    "costs": {
+      "prompt": 0,
+      "completion": 0,
+      "total": 0
+    },
+    "errors": 0,
+    "latency": []
+  },
+  "cache": {
+    "hits": 0,
+    "misses": 0,
+    "hitRate": 0,
+    "tokensSaved": 0,
+    "costSaved": 0
+  },
+  "validation": {
+    "success": 0,
+    "warnings": 0,
+    "errors": 0,
+    "errorRate": 0
+  },
+  "optimization": {
+    "promptsOptimized": 0,
+    "tokensSaved": 0,
+    "savingsRate": 0
+  },
+  "entries": [],
+  "system": {
+    "startTime": 1743381355646,
+    "lastResetTime": 1743381355646,
+    "nodeVersion": "v10.19.0",
+    "platform": "win32",
+    "arch": "x64",
+    "hostname": "DESKTOP-1DUCQK3",
+    "uptime": 10800130,
+    "timeSinceReset": 10800130
+  },
+  "persistence": {
+    "timestamp": 1743392155776,
+    "filename": "metrics_2025-03-30.json"
+  }
+}

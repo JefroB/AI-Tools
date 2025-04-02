@@ -1,0 +1,15 @@
+{
+  "totalFiles": 2,
+  "filesWithIssues": 2,
+  "totalIssues": 2,
+  "issuesByType": {
+    "invalid_json": 2
+  },
+  "issuesBySeverity": {
+    "error": 2,
+    "warning": 0,
+    "info": 0
+  },
+  "fixableIssues": 0,
+  "unfixableIssues": 2
+}
