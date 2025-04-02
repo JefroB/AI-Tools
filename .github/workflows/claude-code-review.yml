@@ -1,0 +1,143 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate code review
+        uses: actions/github-script@v6
+        env:
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_SECURE: ${{ secrets.SMTP_SECURE }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Import the code reviewer module
+            const codeReviewer = require('./src/codeReviewer');
+            
+            // Initialize the code reviewer
+            await codeReviewer.initialize({
+              repository: {
+                owner: context.repo.owner,
+                name: context.repo.repo,
+                defaultBranch: 'master'
+              },
+              github: {
+                token: process.env.GITHUB_TOKEN
+              },
+              email: {
+                enabled: true,
+                from: process.env.EMAIL_FROM,
+                to: process.env.EMAIL_TO,
+                smtpHost: process.env.SMTP_HOST,
+                smtpPort: parseInt(process.env.SMTP_PORT, 10),
+                smtpUser: process.env.SMTP_USER,
+                smtpPass: process.env.SMTP_PASS,
+                secure: process.env.SMTP_SECURE === 'true'
+              }
+            });
+            
+            try {
+              // Get the pull request details
+              const { data: pullRequest } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number
+              });
+              
+              // Get the diff
+              const { data: diff } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                mediaType: { format: 'diff' }
+              });
+              
+              console.log(`Generating code review for PR #${context.issue.number}: ${pullRequest.title}`);
+              
+              // Generate code review
+              const result = await codeReviewer.generateCodeReview(diff, {
+                prTitle: pullRequest.title,
+                prNumber: context.issue.number,
+                prUrl: pullRequest.html_url
+              });
+              
+              console.log('Code review generated successfully');
+              console.log(`Review comments: ${result.reviewComments.length} characters`);
+              console.log(`Approval URL: ${result.approvalUrl}`);
+              
+              // Create the comment body
+              const commentBody = [
+                '## Claude Code Review',
+                '',
+                `I've reviewed this pull request and found ${result.review.summary.totalCount} issues:`,
+                `- ${result.review.summary.criticalCount} critical`,
+                `- ${result.review.summary.highCount} high`,
+                `- ${result.review.summary.mediumCount} medium`,
+                `- ${result.review.summary.lowCount} low`,
+                `- ${result.review.summary.infoCount} info`,
+                '',
+                `**Overall Assessment**: ${result.review.summary.overallAssessment}`,
+                '',
+                'A detailed review has been sent via email with instructions for approving this PR with Claude\'s comments.'
+              ].join('\n');
+              
+              // Post a comment on the PR with a summary and link to the full review
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+              
+            } catch (error) {
+              console.error(`Error generating code review: ${error.message}`);
+              core.setFailed(`Error generating code review: ${error.message}`);
+              
+              // Create the error comment body
+              const errorCommentBody = [
+                '## Claude Code Review Error',
+                '',
+                'I encountered an error while trying to review this pull request:',
+                '',
+                '```',
+                error.message,
+                '```',
+                '',
+                'Please check the GitHub Actions logs for more details.'
+              ].join('\n');
+              
+              // Post a comment on the PR with the error
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: errorCommentBody
+              });
+            }

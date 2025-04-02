@@ -5,6 +5,20 @@ All notable changes to the AI-Tools project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to the custom versioning system described in [VERSIONING.md](./docs/VERSIONING.md).
 
+## [25.095.C.1006] - 2025-04-02
+
+### Added
+- **AI-Powered Code Review System**
+  - Automated code reviews for pull requests
+  - Comprehensive analysis of code quality, security, and performance
+  - Severity-based issue categorization
+  - Email notifications with detailed review reports
+  - GitHub integration with PR comments
+  - Human oversight with approval links
+  - GitHub Action workflow for automatic reviews
+  - Comprehensive documentation in [CODE_REVIEW_SYSTEM.md](./docs/CODE_REVIEW_SYSTEM.md)
+  - Demo script in code-review-demo.js
+
 ## [25.094.C.1005] - 2025-04-02
 
 ### Added

@@ -31,6 +31,8 @@ const enhancedErrorHandling = require('./enhancedErrorHandling');
 const promptEngineering = require('./promptEngineering');
 const contextLengthManager = require('./contextLengthManager');
 const promptStyleManager = require('./promptStyleManager');
+const gitWorkflowUtils = require('./gitWorkflowUtils');
+const codeReviewer = require('./codeReviewer');
 
 // Export all utilities
 module.exports = {
@@ -301,5 +303,30 @@ module.exports = {
   analyzePromptStyle: promptStyleManager.analyzePromptStyle,
   
   // Export the prompt style manager module itself for advanced usage
-  promptStyleManager
+  promptStyleManager,
+  
+  // Git Workflow utilities
+  getCurrentBranch: gitWorkflowUtils.getCurrentBranch,
+  isGitRepository: gitWorkflowUtils.isGitRepository,
+  createBranch: gitWorkflowUtils.createBranch,
+  formatCommitMessage: gitWorkflowUtils.formatCommitMessage,
+  commitChanges: gitWorkflowUtils.commitChanges,
+  stageFiles: gitWorkflowUtils.stageFiles,
+  pushChanges: gitWorkflowUtils.pushChanges,
+  createPullRequest: gitWorkflowUtils.createPullRequest,
+  automateWorkflow: gitWorkflowUtils.automateWorkflow,
+  
+  // Export the git workflow utils module itself for advanced usage
+  gitWorkflowUtils,
+  
+  // Code Reviewer utilities
+  parseDiff: codeReviewer.parseDiff,
+  generateClaudePrompt: codeReviewer.generateClaudePrompt,
+  formatReviewComments: codeReviewer.formatReviewComments,
+  generateApprovalLink: codeReviewer.generateApprovalLink,
+  sendReviewEmail: codeReviewer.sendReviewEmail,
+  generateCodeReview: codeReviewer.generateCodeReview,
+  
+  // Export the code reviewer module itself for advanced usage
+  codeReviewer
 };
