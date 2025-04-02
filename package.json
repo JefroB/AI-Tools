@@ -1,16 +1,16 @@
 {
   "name": "ai-tools",
-  "version": "25.095.C.1006",
+  "version": "25.092.C.1012",
   "description": "Comprehensive utility tools for AI assistants with error reduction and cost efficiency features",
   "main": "src/index.js",
   "versionDetails": {
     "year": 2025,
-    "dayOfYear": 95,
+    "dayOfYear": 92,
     "date": "2025-04-02",
     "major": "C",
     "feature": {
       "category": "Core functionality",
-      "build": 6
+      "build": 12
     }
   },
   "scripts": {
@@ -23,12 +23,16 @@
     "git-workflow-demo": "node git-workflow-demo.js",
     "code-review-demo": "node code-review-demo.js",
     "prompt-style-demo": "node prompt-style-manager-demo.js",
+    "review-conversation-demo": "node review-conversation-demo.js",
+    "contextual-prompt-optimizer-demo": "node contextual-prompt-optimizer-demo.js",
     "validate-version": "node scripts/validate-version.js",
     "bump-version": "node scripts/bump-version.js",
     "bump-version:major": "node scripts/bump-version.js --major",
     "bump-version:docs": "node scripts/bump-version.js --category=5",
     "bump-version:fix": "node scripts/bump-version.js --category=7",
-    "preversion": "npm run validate-version"
+    "preversion": "npm run validate-version",
+    "update-architecture": "node docs/architecture/update-diagrams.js",
+    "architecture-demo": "node architecture-visualizations-demo.js"
   },
   "keywords": [
     "ai",
@@ -51,12 +55,24 @@
     "pull-request",
     "quality",
     "security",
-    "email"
+    "email",
+    "logging",
+    "contextualization",
+    "conversation",
+    "repository",
+    "analysis",
+    "metrics",
+    "reporting",
+    "prompt-optimization",
+    "context-aware",
+    "token-savings",
+    "self-learning",
+    "llm-middleware"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@octokit/rest": "^19.0.13",
+    "@octokit/rest": "^18.12.0",
     "ajv": "^8.17.1",
     "axios": "latest",
     "chalk": "^4.1.2",
@@ -66,9 +82,10 @@
     "fs-extra": "^11.1.1",
     "node-persist": "^4.0.4",
     "node-schedule": "^1.3.3",
-    "nodemailer": "^6.9.9",
+    "nodemailer": "^6.10.0",
     "perf_hooks": "^0.0.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "jest": "^29.5.0",

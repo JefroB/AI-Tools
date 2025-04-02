@@ -6,6 +6,19 @@ This toolkit is a research project of Prime8 Engineering, exploring the capabili
 
 A comprehensive collection of utilities designed for AI assistants and developers, providing enhanced file operations, code manipulation, execution capabilities, project management tools, and cost-efficiency features.
 
+## Major Version D Release
+
+We're excited to announce the release of **Major Version D** of the AI-Tools toolkit! This milestone release consolidates and enhances all the features introduced in version C, with a focus on improved integration, enhanced documentation, and a more streamlined API.
+
+Key improvements in Version D:
+- Better integration between components
+- More comprehensive and consistent documentation
+- More intuitive and consistent API design
+- Performance improvements
+- Expanded test coverage
+
+For detailed information about the Version D release, see [MAJOR_VERSION_D.md](./docs/MAJOR_VERSION_D.md).
+
 ## Overview
 
 AI Tools provides a set of utilities that simplify common operations with improved error handling and enhanced options. These tools are particularly useful for AI assistants that need to interact with the file system, manipulate code, execute commands, and manage projects in a robust and user-friendly way. Version 3.0 adds significant features for API optimization, security scanning, UI testing, and external API integration.
@@ -136,6 +149,98 @@ AI Tools provides a set of utilities that simplify common operations with improv
   - Generate comprehensive analysis reports
   - Visualize tool usage patterns
   - Identify performance bottlenecks and error-prone tools
+
+- **Contextual Usage Tracking** (New in 25.091.C.1002)
+  - Enhanced Tool Usage Tracker with script execution context tracking
+  - Context Collector for detailed error context capture
+  - Smart Recovery with retry, fallback, and circuit breaker patterns
+  - Adaptive prompting based on failure patterns
+
+- **Context Length Management** (New in 25.092.C.1003)
+  - Multi-level prompt optimization (normal, aggressive, extreme)
+  - Adaptive token limit management based on success/failure patterns
+  - Smart content chunking with configurable overlap
+  - Error recovery strategies for context length exceeded errors
+
+- **Prompt Style Manager** (New in 25.093.C.1004)
+  - Token counting for different AI models
+  - Prompt usage logging with metadata
+  - Prompt style analysis to identify patterns
+  - Usage statistics tracking
+
+- **Git Workflow Automation** (New in 25.094.C.1005)
+  - Branch creation with proper naming conventions
+  - Commit message formatting according to standards
+  - File staging and committing
+  - Change pushing to remote repositories
+  - Pull request creation on GitHub
+  - Complete workflow automation
+
+- **AI-Powered Code Review** (New in 25.095.C.1006)
+  - Automated code reviews for pull requests
+  - Comprehensive analysis of code quality, security, and performance
+  - Severity-based issue categorization
+  - Email notifications with detailed review reports
+  - GitHub integration with PR comments
+  - Human oversight with approval links
+
+- **Local LLM Code Review Integration** (New in 25.096.C.1007)
+  - Use local LLMs (like DeepSeek Coder) alongside Claude for code reviews
+  - Run code reviews offline with no API costs
+  - Compare and merge reviews from multiple sources
+  - Track agreement rates between different models
+  - Customize which models to use and how to handle conflicts
+  - Detailed metrics collection for performance analysis
+
+- **LLM Feedback Loop System** (New in 25.097.C.1008)
+  - Enable discussions between different LLMs (Claude and local LLMs)
+  - Compare reviews to identify agreements and disagreements
+  - Create discussion threads for each issue location
+  - Synthesize conflicting opinions
+  - Apply relevant rules from the AI-Tools ruleset
+  - Generate improved solutions based on the discussions
+  - Format the discussions and improvements for GitHub
+
+- **LLM Middleware for Prompt Optimization** (New in 25.098.C.1009)
+  - Use local LLMs to optimize prompts before sending to Claude
+  - Reduce token usage by 10-30% or more
+  - Multiple optimization levels (minimal, standard, aggressive)
+  - Comprehensive logging and metrics
+  - Seamless integration with prompt engineering module
+  - Support for Ollama and LM Studio backends
+
+- **Enhanced Code Review Contextualization and Logging** (New in 25.099.C.1010)
+  - Store and analyze code review conversations between different LLMs
+  - Index conversations by code patterns, issue types, applied rules, and more
+  - Efficient retrieval with in-memory caching for performance
+  - Generate statistics and insights from stored conversations
+  - Comprehensive logging with structured logging, log rotation, and log analysis
+  - Performance monitoring and metrics collection
+  - HTML and Markdown report generation
+  - Self-improving system that learns from past code reviews
+
+- **Contextual Prompt Optimizer** (New in 25.100.C.1011)
+  - Context-aware prompt optimization for different types of content
+  - Automatic detection of context type (code review, conversation, documentation)
+  - Extraction of key terms and patterns from context
+  - Integration with LLM Middleware and Prompt Engineering modules
+  - Self-learning system that improves optimization over time
+  - Comprehensive logging with enhanced context information
+  - Token savings metrics by context type
+  - Detailed reports with recommendations for optimization improvements
+  - Demo script in contextual-prompt-optimizer-demo.js
+
+- **Architecture Visualizations** (New in 25.100.C.1011)
+  - Comprehensive visualizations of the AI-Tools architecture
+  - Module dependency diagrams showing relationships between components
+  - Feature timeline visualizations showing the evolution of features
+  - Data flow diagrams illustrating how data moves through the system
+  - Module category visualizations organizing modules by functional category
+  - Optimization pipeline diagrams detailing the prompt optimization process
+  - Component interaction diagrams showing how components interact
+  - Interactive dashboard for exploring the architecture
+  - Automated diagram generation with GitHub Actions integration
+  - Consistent color scheme and styling for all visualizations
 
 ## Installation
 

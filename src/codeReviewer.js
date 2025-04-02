@@ -36,6 +36,15 @@ const DEFAULT_CONFIG = {
     smtpPass: process.env.SMTP_PASS || '',
     secure: process.env.SMTP_SECURE === 'true'
   },
+  reviewSources: {
+    claude: true,
+    localLlm: false
+  },
+  localLlm: {
+    type: 'ollama', // 'ollama' or 'lmstudio'
+    model: 'deepseek-coder:6.7b-instruct-q4_K_M',
+    temperature: 0.1
+  },
   rules: {
     codeQuality: true,
     security: true,
@@ -73,6 +82,11 @@ const DEFAULT_CONFIG = {
       color: '#0000FF',
       emoji: 'ℹ️'
     }
+  },
+  comparison: {
+    enabled: false,
+    mergeResults: true,
+    preferClaudeOnConflict: true
   }
 };
 
@@ -746,17 +760,110 @@ async function generateCodeReview(diff, options) {
     // Parse the diff
     const changedFiles = parseDiff(diff);
     
-    // Generate Claude prompt
-    const prompt = generateClaudePrompt(changedFiles, rules);
+    // Get review sources from config
+    const { claude: useClaudeReview, localLlm: useLocalLlmReview } = config.reviewSources;
     
-    // Call Claude API
-    const claudeResponse = await callClaudeApi(prompt);
+    // Initialize reviews array
+    const reviews = [];
     
-    // Parse Claude's response
-    const review = parseClaudeReview(claudeResponse);
+    // Get Claude review if enabled
+    if (useClaudeReview) {
+      try {
+        // Generate Claude prompt
+        const prompt = generateClaudePrompt(changedFiles, rules);
+        
+        // Call Claude API
+        const claudeResponse = await callClaudeApi(prompt);
+        
+        // Parse Claude's response
+        const claudeReview = parseClaudeReview(claudeResponse);
+        
+        // Add to reviews array
+        reviews.push({ source: 'claude', review: claudeReview });
+      } catch (error) {
+        console.error(`Error generating Claude review: ${error.message}`);
+      }
+    }
+    
+    // Get local LLM review if enabled
+    if (useLocalLlmReview) {
+      try {
+        // Import local LLM reviewer dynamically
+        const localLlmReviewer = require('./localLlmReviewer');
+        
+        // Initialize if not already initialized
+        if (!localLlmReviewer.initialized) {
+          await localLlmReviewer.initialize();
+        }
+        
+        // Generate local LLM review
+        const localLlmResult = await localLlmReviewer.generateCodeReview(diff, {
+          rules,
+          llmType: config.localLlm.type,
+          model: config.localLlm.model
+        });
+        
+        // Add to reviews array
+        reviews.push({ source: 'localLlm', review: localLlmResult.review });
+      } catch (error) {
+        console.error(`Error generating local LLM review: ${error.message}`);
+      }
+    }
+    
+    // If no reviews were generated, throw an error
+    if (reviews.length === 0) {
+      throw new Error('No reviews were generated. Check your configuration and try again.');
+    }
+    
+    // Determine which review to use
+    let finalReview;
+    
+    if (reviews.length === 1) {
+      // If only one review source, use that
+      finalReview = reviews[0].review;
+    } else if (config.comparison.enabled) {
+      // If comparison is enabled, compare reviews
+      try {
+        // Import local LLM reviewer for comparison function
+        const localLlmReviewer = require('./localLlmReviewer');
+        
+        // Get reviews
+        const claudeReview = reviews.find(r => r.source === 'claude')?.review;
+        const localLlmReview = reviews.find(r => r.source === 'localLlm')?.review;
+        
+        if (claudeReview && localLlmReview) {
+          // Compare reviews
+          const comparison = localLlmReviewer.compareReviews(claudeReview, localLlmReview);
+          
+          if (config.comparison.mergeResults) {
+            // Merge results
+            finalReview = mergeReviews(claudeReview, localLlmReview, comparison, {
+              preferClaudeOnConflict: config.comparison.preferClaudeOnConflict
+            });
+          } else {
+            // Use Claude review by default
+            finalReview = claudeReview;
+            
+            // Add comparison data
+            finalReview.comparison = comparison;
+          }
+        } else {
+          // Use whichever review is available
+          finalReview = claudeReview || localLlmReview;
+        }
+      } catch (error) {
+        console.error(`Error comparing reviews: ${error.message}`);
+        // Use the first review as fallback
+        finalReview = reviews[0].review;
+      }
+    } else {
+      // If comparison is not enabled, use Claude review if available, otherwise use local LLM review
+      const claudeReview = reviews.find(r => r.source === 'claude')?.review;
+      finalReview = claudeReview || reviews[0].review;
+    }
     
     // Format review comments
-    const reviewComments = formatReviewComments(review);
+    const reviewComments = formatReviewComments(finalReview);
     
     // Generate approval link
     const approvalUrl = generateApprovalLink(prNumber, reviewComments);
@@ -769,19 +876,94 @@ async function generateCodeReview(diff, options) {
         prNumber,
         prUrl,
         approvalUrl,
-        review
+        review: finalReview
       });
     }
     
     return {
-      review,
+      review: finalReview,
       reviewComments,
-      approvalUrl
+      approvalUrl,
+      reviews: reviews.map(r => ({ source: r.source, summary: r.review.summary }))
     };
   } catch (error) {
     console.error(`Error generating code review: ${error.message}`);
     throw error;
   }
+}
+
+/**
+ * Merge reviews from different sources
+ * @param {Object} claudeReview - Review from Claude
+ * @param {Object} localLlmReview - Review from local LLM
+ * @param {Object} comparison - Comparison results
+ * @param {Object} options - Merge options
+ * @returns {Object} - Merged review
+ */
+function mergeReviews(claudeReview, localLlmReview, comparison, options = {}) {
+  const { preferClaudeOnConflict = true } = options;
+  
+  // Create a new review object
+  const mergedReview = {
+    review: '',
+    issues: [],
+    summary: {
+      criticalCount: 0,
+      highCount: 0,
+      mediumCount: 0,
+      lowCount: 0,
+      infoCount: 0,
+      totalCount: 0,
+      overallAssessment: ''
+    },
+    comparison
+  };
+  
+  // Add common issues
+  for (const commonIssue of comparison.commonIssues) {
+    // Use Claude's version of the issue if preferClaudeOnConflict is true, otherwise use local LLM's
+    const issue = preferClaudeOnConflict ? commonIssue.claude : commonIssue.localLlm;
+    mergedReview.issues.push(issue);
+  }
+  
+  // Add Claude's unique issues
+  mergedReview.issues.push(...comparison.claudeUniqueIssues);
+  
+  // Add local LLM's unique issues
+  mergedReview.issues.push(...comparison.localLlmUniqueIssues);
+  
+  // Sort issues by file path and line number
+  mergedReview.issues.sort((a, b) => {
+    if (a.filePath !== b.filePath) {
+      return a.filePath.localeCompare(b.filePath);
+    }
+    return a.lineNumber - b.lineNumber;
+  });
+  
+  // Update summary counts
+  for (const issue of mergedReview.issues) {
+    mergedReview.summary[`${issue.severity}Count`]++;
+    mergedReview.summary.totalCount++;
+  }
+  
+  // Combine overall assessments
+  mergedReview.summary.overallAssessment = `Combined assessment from multiple review sources:\n\n`;
+  
+  if (claudeReview && claudeReview.summary.overallAssessment) {
+    mergedReview.summary.overallAssessment += `Claude: ${claudeReview.summary.overallAssessment}\n\n`;
+  }
+  
+  if (localLlmReview && localLlmReview.summary.overallAssessment) {
+    mergedReview.summary.overallAssessment += `Local LLM: ${localLlmReview.summary.overallAssessment}\n\n`;
+  }
+  
+  // Add comparison summary
+  mergedReview.summary.overallAssessment += `\nReview sources agreement rate: ${(comparison.agreementRate * 100).toFixed(1)}%\n`;
+  mergedReview.summary.overallAssessment += `Common issues: ${comparison.summary.commonIssueCount}\n`;
+  mergedReview.summary.overallAssessment += `Claude unique issues: ${comparison.summary.claudeUniqueCount}\n`;
+  mergedReview.summary.overallAssessment += `Local LLM unique issues: ${comparison.summary.localLlmUniqueCount}\n`;
+  
+  return mergedReview;
 }
 
 module.exports = {
