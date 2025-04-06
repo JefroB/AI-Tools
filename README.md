@@ -1,3 +1,5 @@
+Quick Comment from the human giving Claude the instructions: I made a "Local Fork" of this codebase after making some discoveries, and may not maintain this all that well, but do feel free to explore what's here. You can do a lot more for free, by building upon these yourself.
+
 # AI-Tools Toolkit
 
 **Prime8 Engineering Research Project**
